@@ -59,6 +59,7 @@ Errors go to stderr and the process exits non-zero.
 | `eds repo show <id-or-name> [--json]`                                                                                                   | Show details: id, default_branch, size, clone URLs                                                                                                          |
 | `eds repo delete <id-or-name> [--force] [--json]`                                                                                       | Delete (irreversible; requires confirmation unless `--force`)                                                                                               |
 | `eds repo clone <id-or-name> [dir] [--ssh] [--target DIR]`                                                                              | Clone via local `git` CLI                                                                                                                                   |
+| `eds repo remote-add <id-or-name> [--name N] [--ssh]`                                                                                   | Wire an existing local checkout to it (`git remote add`, authenticated)                                                                                     |
 | `eds wf app create <name> --repository R\|--repository-url URL --branch B [--json]`                                                     | Create a Workflow Studio application from a repo + branch (auto-triggers first deploy)                                                                    |
 | `eds wf app list [--search S] [--sort created_at_asc\|created_at_desc] [--json]`                                                        | List applications                                                                                                                                           |
 | `eds wf app show <id> [--json]`                                                                                                         | Show application details (status, run_id, pipeline_id, ...)                                                                                                 |
@@ -161,13 +162,38 @@ cd ./work/my-new-repo
 git status
 ```
 
+`eds repo clone` (HTTPS mode, the default) embeds `EDS_API_KEY` as HTTP
+Basic Auth credentials directly in the clone URL it hands to `git clone`.
+It does **not** need or use a git credential helper, an OS keychain, or
+`~/.netrc` — none of which exist in a typical agent sandbox. If a plain
+`git clone <url>` (bypassing this CLI) ever fails with something like
+`could not read Username ... terminal prompts disabled` or a keychain/
+credential-helper error, that's this exact gap — use `eds repo clone`
+instead of shelling out to `git clone` directly.
+
 ### Push code (after clone)
 
-The CLI does not implement a custom upload path — use git directly:
+The CLI does not implement a custom upload path — use git directly. Because
+`eds repo clone` already wrote the API key into `origin`'s URL, `git push`
+authenticates the same way, no extra setup needed:
 
 ```bash
 cd ./work/my-new-repo
 git add . && git commit -m "init" && git push origin main
+```
+
+### Wire up code that already exists locally (no clone involved)
+
+If the code was scaffolded locally first and the repository was created
+after the fact, use `eds repo remote-add` instead of a plain
+`git remote add` — it embeds the same authenticated URL `eds repo clone`
+would have:
+
+```bash
+eds repo create my-new-repo
+cd path/to/existing/local/repo
+eds repo remote-add my-new-repo
+git push -u origin main
 ```
 
 ### Delete a repository (with confirmation)

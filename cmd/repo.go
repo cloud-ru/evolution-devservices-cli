@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"strings"
@@ -26,6 +27,7 @@ func newRepoCmd() *cobra.Command {
 	cmd.AddCommand(newRepoShowCmd())
 	cmd.AddCommand(newRepoDeleteCmd())
 	cmd.AddCommand(newRepoCloneCmd())
+	cmd.AddCommand(newRepoRemoteAddCmd())
 	return cmd
 }
 
@@ -279,12 +281,23 @@ the clone, as you would with any other git server.`,
 				return fmt.Errorf("api get repository: %w", err)
 			}
 
+			useSSH := ssh && info.Clone.SSH != ""
 			cloneURL := info.Clone.HTTPS
-			if ssh && info.Clone.SSH != "" {
+			if useSSH {
 				cloneURL = info.Clone.SSH
 			}
 			if cloneURL == "" {
 				return fmt.Errorf("repository has no clone url")
+			}
+
+			// The smart-HTTP endpoint authenticates via HTTP Basic Auth using
+			// the API key as the password (any username works). Embed it in
+			// the URL so clone/push work standalone, without relying on a
+			// git credential helper or ~/.netrc being pre-configured in the
+			// environment (agents/CI have neither).
+			displayCloneURL := cloneURL
+			if !useSSH {
+				cloneURL = withBasicAuth(cloneURL, ctx.Cfg.APIKey)
 			}
 
 			dst := target
@@ -293,12 +306,14 @@ the clone, as you would with any other git server.`,
 			}
 
 			gitArgs := []string{"clone", cloneURL}
+			displayArgs := []string{"clone", displayCloneURL}
 			if dst != "" {
 				gitArgs = append(gitArgs, dst)
+				displayArgs = append(displayArgs, dst)
 			}
 
 			if !ctx.Quiet {
-				fmt.Fprintf(cmd.OutOrStdout(), "Running: git %s\n", strings.Join(gitArgs, " "))
+				fmt.Fprintf(cmd.OutOrStdout(), "Running: git %s\n", strings.Join(displayArgs, " "))
 			}
 
 			c := exec.CommandContext(cmd.Context(), "git", gitArgs...)
@@ -312,6 +327,89 @@ the clone, as you would with any other git server.`,
 	cmd.Flags().StringVar(&target, "target", "", "target directory (defaults to repo name)")
 	cmd.Flags().BoolVar(&ssh, "ssh", false, "clone via SSH instead of HTTPS")
 	return cmd
+}
+
+func newRepoRemoteAddCmd() *cobra.Command {
+	var (
+		remoteName string
+		ssh        bool
+	)
+
+	cmd := &cobra.Command{
+		Use:   "remote-add <repository-id-or-name>",
+		Short: "Wire an existing local git checkout to a Repo-product remote",
+		Long: `remote-add looks up the repository via the API and runs
+"git remote add" in the current directory against its smart-HTTP (or SSH)
+URL, with the API key embedded as HTTP Basic Auth credentials - same
+authentication "eds repo clone" sets up, just for a local checkout that
+already exists (e.g. code was scaffolded locally, then "eds repo create"
+made the remote). If you don't have a local checkout yet, use
+"eds repo clone" instead.`,
+		Args: cobra.ExactArgs(1),
+		Example: `  eds repo remote-add my-repo
+  eds repo remote-add my-repo --name upstream
+  eds repo remote-add my-repo --ssh`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, err := resolveContext(cmd)
+			if err != nil {
+				return err
+			}
+			if err := ctx.requireAPIKey(); err != nil {
+				return err
+			}
+
+			// Try to resolve the argument as either an id or a name.
+			id, err := resolveRepoID(cmd.Context(), ctx, args[0])
+			if err != nil {
+				return err
+			}
+
+			info, err := ctx.API.GetRepository(cmd.Context(), id)
+			if err != nil {
+				return fmt.Errorf("api get repository: %w", err)
+			}
+
+			useSSH := ssh && info.Clone.SSH != ""
+			remoteURL := info.Clone.HTTPS
+			if useSSH {
+				remoteURL = info.Clone.SSH
+			}
+			if remoteURL == "" {
+				return fmt.Errorf("repository has no clone url")
+			}
+
+			displayURL := remoteURL
+			if !useSSH {
+				remoteURL = withBasicAuth(remoteURL, ctx.Cfg.APIKey)
+			}
+
+			if !ctx.Quiet {
+				fmt.Fprintf(cmd.OutOrStdout(), "Running: git remote add %s %s\n", remoteName, displayURL)
+			}
+
+			c := exec.CommandContext(cmd.Context(), "git", "remote", "add", remoteName, remoteURL)
+			c.Stdout = cmd.OutOrStdout()
+			c.Stderr = cmd.ErrOrStderr()
+			c.Stdin = os.Stdin
+			return c.Run()
+		},
+	}
+
+	cmd.Flags().StringVar(&remoteName, "name", "origin", "git remote name to create")
+	cmd.Flags().BoolVar(&ssh, "ssh", false, "use the SSH remote instead of HTTPS")
+	return cmd
+}
+
+// withBasicAuth embeds apiKey as the password of an HTTP Basic Auth userinfo
+// component in rawURL (username is arbitrary; the server only checks the
+// password). Returns rawURL unchanged if it doesn't parse as a URL.
+func withBasicAuth(rawURL, apiKey string) string {
+	u, err := url.Parse(rawURL)
+	if err != nil || apiKey == "" {
+		return rawURL
+	}
+	u.User = url.UserPassword("eds", apiKey)
+	return u.String()
 }
 
 // resolveRepoID accepts either a raw repository id (UUID) or a repository

@@ -17,7 +17,11 @@ for secrets.
 - Reads the API key from `EDS_API_KEY` or from `~/.config/eds/config.json`.
 - Outputs JSON when piped, pretty tables on a TTY (`--json` to force).
 - Repo uses the local `git` CLI for clone. Both products authenticate with
-  `X-API-KEY`.
+  `X-API-KEY`. `eds repo clone` embeds the API key as HTTP Basic Auth
+  credentials directly into the smart-HTTP URL it passes to `git clone`, so
+  clone/push work standalone — no git credential helper, OS keychain, or
+  `~/.netrc` needs to be pre-configured. This matters for CI and AI agent
+  sandboxes, which typically have none of those.
 
 ## Installation
 
@@ -112,6 +116,7 @@ eds repo create <name>                     create a repository
 eds repo show <id-or-name>                 show repository details
 eds repo delete <id-or-name> [--force]     delete a repository
 eds repo clone <id-or-name> [dir] [--ssh]  clone via local git CLI
+eds repo remote-add <id-or-name> [--name N] [--ssh]  wire an existing local checkout to it (git remote add)
 
 eds wf app create <name> --repository R|--repository-url URL --branch B   create and auto-deploy a Workflow Studio application
 eds wf app list                                       list applications
@@ -223,8 +228,26 @@ cd demo
 git add . && git commit -m "init" && git push origin main
 ```
 
-`git push` works out of the box because the API key is used as
-basic-auth credentials on the smart-HTTP endpoint exposed by the server.
+`git push` works out of the box because `eds repo clone` already embedded the
+API key as basic-auth credentials in `origin`'s URL (see `.git/config`) — no
+git credential helper or OS keychain is involved. Note this means the API
+key sits in plaintext in that repo's `.git/config`; treat the clone
+directory with the same care as the key itself.
+
+If the code already exists locally (no `eds repo clone` involved) and you
+just created the remote repository, use `eds repo remote-add` instead of a
+plain `git remote add` to get the same embedded authentication:
+
+```bash
+eds repo create demo
+cd path/to/existing/local/repo
+eds repo remote-add demo
+git push -u origin main
+```
+
+`--ssh` is the one exception: it depends on the host's SSH public key being
+registered separately (not handled by this CLI), so it still needs whatever
+ambient SSH setup the environment provides.
 
 ## Distribution / publishing
 
