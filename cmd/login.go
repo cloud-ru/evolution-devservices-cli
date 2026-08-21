@@ -40,7 +40,7 @@ permissions.`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			cfg, err := config.Load()
 			if err != nil {
-				return err
+				return fmt.Errorf("cannot load config: %w", err)
 			}
 
 			// Read from stdin if requested.
@@ -71,7 +71,7 @@ permissions.`,
 			}
 
 			if err := cfg.Save(); err != nil {
-				return err
+				return fmt.Errorf("save config: %w", err)
 			}
 			fmt.Fprintln(cmd.OutOrStdout(), "Credentials saved.")
 			return nil

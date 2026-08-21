@@ -10,7 +10,6 @@ import (
 	"github.com/cloud-ru/evolution-devservices-cli/internal/config"
 	"github.com/cloud-ru/evolution-devservices-cli/internal/output"
 	"github.com/cloud-ru/evolution-devservices-cli/internal/repoapi"
-	"github.com/cloud-ru/evolution-devservices-cli/internal/workflowapi"
 )
 
 // runtimeContext holds the resolved configuration, API clients and printer
@@ -18,7 +17,6 @@ import (
 type runtimeContext struct {
 	Cfg            *config.Config
 	API            *repoapi.Client
-	WorkflowAPI    *workflowapi.Client
 	Printer        *output.Printer
 	Quiet          bool
 	ProjectID      string
@@ -30,7 +28,7 @@ type runtimeContext struct {
 func resolveContext(cmd *cobra.Command) (*runtimeContext, error) {
 	cfg, err := config.Load()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot load config: %w", err)
 	}
 
 	// Apply flag overrides on top of config (flags > env > file > defaults).
@@ -65,7 +63,6 @@ func resolveContext(cmd *cobra.Command) (*runtimeContext, error) {
 	rt := &runtimeContext{
 		Cfg:            cfg,
 		API:            repoapi.New(cfg.APIURL, cfg.APIKey, cfg.ProjectID),
-		WorkflowAPI:    workflowapi.New(cfg.WorkflowAPIURL, cfg.APIKey, cfg.ProjectID),
 		Printer:        output.New(format),
 		Quiet:          quiet,
 		ProjectID:      cfg.ProjectID,

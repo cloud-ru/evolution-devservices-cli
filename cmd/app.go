@@ -6,10 +6,8 @@ import (
 	"os"
 	"strings"
 
+	workflowclient "github.com/cloud-ru/evolution-devservices-cli/internal/workflow_client"
 	"github.com/spf13/cobra"
-
-	"github.com/cloud-ru/evolution-devservices-cli/internal/output"
-	"github.com/cloud-ru/evolution-devservices-cli/internal/workflowapi"
 )
 
 // newAppCmd creates the parent `eds wf app` command and all its subcommands.
@@ -28,7 +26,6 @@ func newAppCmd() *cobra.Command {
 	cmd.AddCommand(newAppDeleteCmd())
 	cmd.AddCommand(newAppDeployCmd())
 	cmd.AddCommand(newAppDeploymentsCmd())
-	cmd.AddCommand(newAppStatusCmd())
 	return cmd
 }
 
@@ -76,20 +73,18 @@ Use "eds wf app deploy" afterwards to actually run the pipeline and publish.`,
 				}
 			}
 
-			req := workflowapi.CreateApplicationRequest{
-				Name:          args[0],
-				Branch:        branch,
-				RepositoryID:  repositoryID,
-				RepositoryURL: repositoryURL,
-			}
-			app, err := ctx.WorkflowAPI.CreateApplication(cmd.Context(), req)
+			app, _, err := ctx.WorkflowClient.ServicesAPI.ProjectProjectIdApplicationPost(cmd.Context(), ctx.ProjectID).
+				Request(workflowclient.GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate{
+					Branch:        branch,
+					Name:          &args[0],
+					RepositoryId:  &repositoryID,
+					RepositoryUrl: &repositoryURL,
+					SpaceId:       nil,
+				}).Execute()
 			if err != nil {
-				return err
+				return fmt.Errorf("workflow client application post: %w", err)
 			}
 
-			if !ctx.Quiet {
-				fmt.Fprintf(cmd.OutOrStdout(), "Created application %q (id=%s)\n", app.Name, app.ID)
-			}
 			return ctx.Printer.PrintJSON(app)
 		},
 	}
@@ -123,28 +118,17 @@ func newAppListCmd() *cobra.Command {
 				return err
 			}
 
-			resp, err := ctx.WorkflowAPI.ListApplications(cmd.Context(), workflowapi.ListApplicationsOptions{
-				Search: search,
-				Sort:   workflowapi.SortOrder(sort),
-				Limit:  limit,
-				Offset: offset,
-			})
+			resp, _, err := ctx.WorkflowClient.ServicesAPI.ListApplications(cmd.Context(), ctx.ProjectID).
+				Sort(sort).
+				Limit(limit).
+				Offset(offset).
+				Search(search).
+				Execute()
 			if err != nil {
-				return err
+				return fmt.Errorf("workflow client application list: %w", err)
 			}
 
-			if ctx.Printer.Format == output.FormatJSON {
-				return ctx.Printer.PrintJSON(resp)
-			}
-
-			headers := []string{"ID", "NAME", "BRANCH", "STATUS", "UPDATED"}
-			rows := make([][]string, 0, len(resp.Applications))
-			for _, a := range resp.Applications {
-				rows = append(rows, []string{a.ID, a.Name, a.Branch, a.Status, output.HumanTime(a.UpdatedAt)})
-			}
-			ctx.Printer.Table(headers, rows)
-			fmt.Fprintf(cmd.OutOrStdout(), "Showing %d of %d\n", len(resp.Applications), resp.Total)
-			return nil
+			return ctx.Printer.PrintJSON(resp)
 		},
 	}
 
@@ -169,28 +153,13 @@ func newAppShowCmd() *cobra.Command {
 				return err
 			}
 
-			app, err := ctx.WorkflowAPI.GetApplication(cmd.Context(), args[0])
+			app, _, err := ctx.WorkflowClient.ServicesAPI.ProjectProjectIdApplicationApplicationIdGet(cmd.Context(), ctx.ProjectID, args[0]).
+				Execute()
 			if err != nil {
-				return err
+				return fmt.Errorf("workflow client get app: %w", err)
 			}
 
-			if ctx.Printer.Format == output.FormatJSON {
-				return ctx.Printer.PrintJSON(app)
-			}
-			pairs := [][2]string{
-				{"id", app.ID},
-				{"name", app.Name},
-				{"branch", app.Branch},
-				{"repository_id", app.RepositoryID},
-				{"repository_url", app.RepositoryURL},
-				{"status", app.Status},
-				{"run_id", app.RunID},
-				{"pipeline_id", app.PipelineID},
-				{"created_at", output.HumanTime(app.CreatedAt)},
-				{"updated_at", output.HumanTime(app.UpdatedAt)},
-			}
-			ctx.Printer.KeyValue(pairs)
-			return nil
+			return ctx.Printer.PrintJSON(app)
 		},
 	}
 	return cmd
@@ -220,14 +189,15 @@ func newAppUpdateCmd() *cobra.Command {
 				return fmt.Errorf("--branch is required")
 			}
 
-			if err := ctx.WorkflowAPI.UpdateApplication(cmd.Context(), args[0], workflowapi.UpdateApplicationRequest{
-				Name:   name,
-				Branch: branch,
-			}); err != nil {
-				return err
-			}
-			if !ctx.Quiet {
-				fmt.Fprintf(cmd.OutOrStdout(), "Updated application %s\n", args[0])
+			_, err = ctx.WorkflowClient.ServicesAPI.ProjectProjectIdApplicationApplicationIdPatch(cmd.Context(), ctx.ProjectID, args[0]).
+				Request(workflowclient.GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate{
+					Branch:  branch,
+					Name:    &name,
+					SpaceId: "",
+				}).
+				Execute()
+			if err != nil {
+				return fmt.Errorf("workflow client update application: %w", err)
 			}
 			return nil
 		},
@@ -266,10 +236,12 @@ func newAppDeleteCmd() *cobra.Command {
 				}
 			}
 
-			if err := ctx.WorkflowAPI.DeleteApplication(cmd.Context(), args[0]); err != nil {
-				return err
+			_, err = ctx.WorkflowClient.ServicesAPI.ProjectProjectIdApplicationApplicationIdDelete(cmd.Context(), ctx.ProjectID, args[0]).
+				Execute()
+			if err != nil {
+				return fmt.Errorf("workflow client delete application: %w", err)
 			}
-			fmt.Fprintf(cmd.OutOrStdout(), "Deleted application %s\n", args[0])
+
 			return nil
 		},
 	}
@@ -284,7 +256,7 @@ func newAppDeployCmd() *cobra.Command {
 		Short: "Run the application's pipeline and publish it",
 		Args:  cobra.ExactArgs(1),
 		Long: `deploy triggers a new run of the application's deploy pipeline.
-Use the returned run_id with "eds wf run show" or "eds wf app status" to
+Use the returned run_id with "eds wf run show" to
 follow progress, and check the "url" field once it succeeds.`,
 		Example: `  eds wf app deploy my-app-id --json | jq -r '.run_id'`,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -296,13 +268,13 @@ follow progress, and check the "url" field once it succeeds.`,
 				return err
 			}
 
-			dep, err := ctx.WorkflowAPI.CreateDeployment(cmd.Context(), args[0])
+			dep, _, err := ctx.WorkflowClient.ServicesAPI.ProjectProjectIdApplicationApplicationIdDeploymentPost(cmd.Context(), ctx.ProjectID, args[0]).
+				Request(map[string]any{}).
+				Execute()
 			if err != nil {
-				return err
+				return fmt.Errorf("workflow client deploy application: %w", err)
 			}
-			if !ctx.Quiet {
-				fmt.Fprintf(cmd.OutOrStdout(), "Deploying application %s (run_id=%s)\n", args[0], dep.RunID)
-			}
+
 			return ctx.Printer.PrintJSON(dep)
 		},
 	}
@@ -332,28 +304,17 @@ func newAppDeploymentsCmd() *cobra.Command {
 				return err
 			}
 
-			resp, err := ctx.WorkflowAPI.ListDeployments(cmd.Context(), args[0], workflowapi.ListDeploymentsOptions{
-				Search: search,
-				Sort:   workflowapi.SortOrder(sort),
-				Limit:  limit,
-				Offset: offset,
-			})
+			resp, _, err := ctx.WorkflowClient.ServicesAPI.ProjectProjectIdApplicationApplicationIdDeploymentListGet(cmd.Context(), ctx.ProjectID, args[0]).
+				Limit(limit).
+				Offset(offset).
+				Search(search).
+				Sort(sort).
+				Execute()
 			if err != nil {
-				return err
+				return fmt.Errorf("workflow client list application: %w", err)
 			}
 
-			if ctx.Printer.Format == output.FormatJSON {
-				return ctx.Printer.PrintJSON(resp)
-			}
-
-			headers := []string{"ID", "RUN_ID", "URL", "CREATED"}
-			rows := make([][]string, 0, len(resp.Deployments))
-			for _, d := range resp.Deployments {
-				rows = append(rows, []string{d.ID, d.RunID, d.URL, output.HumanTime(d.CreatedAt)})
-			}
-			ctx.Printer.Table(headers, rows)
-			fmt.Fprintf(cmd.OutOrStdout(), "Showing %d of %d\n", len(resp.Deployments), resp.Total)
-			return nil
+			return ctx.Printer.PrintJSON(resp)
 		},
 	}
 
@@ -361,70 +322,5 @@ func newAppDeploymentsCmd() *cobra.Command {
 	cmd.Flags().StringVar(&sort, "sort", "created_at_desc", "sort order: created_at_asc, created_at_desc")
 	cmd.Flags().IntVar(&limit, "limit", 50, "page size")
 	cmd.Flags().IntVar(&offset, "offset", 0, "offset")
-	return cmd
-}
-
-func newAppStatusCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "status <application-id>",
-		Short: "Show publish status: current run, stages/jobs and the live URL",
-		Args:  cobra.ExactArgs(1),
-		Long: `status is a convenience wrapper around "eds wf app show" + the
-application's latest run and deployment: it resolves the application's
-current run (with its stage/job breakdown) and its most recent deployment
-URL in one call. Useful for polling after "eds wf app deploy".`,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			ctx, err := resolveContext(cmd)
-			if err != nil {
-				return err
-			}
-			if err := ctx.ensureWorkflowAuth(cmd.Context()); err != nil {
-				return err
-			}
-
-			app, err := ctx.WorkflowAPI.GetApplication(cmd.Context(), args[0])
-			if err != nil {
-				return err
-			}
-
-			var latest *workflowapi.Deployment
-			deps, err := ctx.WorkflowAPI.ListDeployments(cmd.Context(), args[0], workflowapi.ListDeploymentsOptions{
-				Sort:  workflowapi.SortCreatedAtDesc,
-				Limit: 1,
-			})
-			if err == nil && len(deps.Deployments) > 0 {
-				latest = &deps.Deployments[0]
-			}
-
-			if ctx.Printer.Format == output.FormatJSON {
-				return ctx.Printer.PrintJSON(map[string]any{
-					"application":       app,
-					"latest_deployment": latest,
-				})
-			}
-
-			ctx.Printer.KeyValue([][2]string{
-				{"id", app.ID},
-				{"name", app.Name},
-				{"status", app.Status},
-				{"run_id", app.RunID},
-			})
-
-			if app.Run != nil {
-				fmt.Fprintf(cmd.OutOrStdout(), "\nRun %s: %s\n", app.Run.ID, app.Run.Status)
-				for _, stage := range app.Run.Stages {
-					fmt.Fprintf(cmd.OutOrStdout(), "  stage %-24s %s\n", stage.Name, stage.Status)
-					for _, job := range stage.Jobs {
-						fmt.Fprintf(cmd.OutOrStdout(), "    job %-22s %s\n", job.Name, job.Status)
-					}
-				}
-			}
-
-			if latest != nil && latest.URL != "" {
-				fmt.Fprintf(cmd.OutOrStdout(), "\nurl: %s\n", latest.URL)
-			}
-			return nil
-		},
-	}
 	return cmd
 }

@@ -42,7 +42,7 @@ func newJobLogsCmd() *cobra.Command {
 			}
 
 			resp, _, err := ctx.WorkflowClient.WorkflowsAPI.
-				ProjectProjectIdJobJobIdLogListGet(cmd.Context(), ctx.ProjectID, args[0]).
+				GetJobLogs(cmd.Context(), ctx.ProjectID, args[0]).
 				Request(workflowclient.GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestJobLogList{
 					BeforeTime: &beforeTime,
 					Limit:      &limit,

@@ -21,8 +21,8 @@ stable `--json` output, config comes from env vars, and `skill/SKILL.md`
 documents the CLI's contract for AI agents driving it. The primary
 agent-facing scenario is *ship a vibe-coded app*: `eds repo create` +
 `git push` gets code hosted, `eds wf app create` + `eds wf app deploy`
-publishes it, and `eds wf app status` (or the lower-level `eds wf run`/
-`eds wf job`) tracks the rollout.
+publishes it, and `eds wf app show` / `eds wf run show` /
+`eds wf job logs` track the rollout.
 
 ## Commands
 
@@ -60,7 +60,7 @@ genuinely internal and not tied to where the repo lives.
 ## Architecture
 
 Cobra-based CLI, one command per file under `cmd/`, thin API clients under
-`internal/repoapi/` (Repo product) and `internal/workflowapi/` (Workflow
+`internal/repoapi/` (Repo product) and `internal/workflow_client/` (Workflow
 Studio).
 
 - `main.go` — entry point, wires `main.version` (ldflags) into `cmd.SetVersion`.
@@ -70,8 +70,8 @@ Studio).
   unprefixed): `--project`, `--api-key`. Plus `--json`, `--quiet`.
 - `cmd/helpers.go` — `resolveContext(cmd)` is the entry point every subcommand
   calls first. It loads config, layers flag overrides on top (flags > env >
-  file > defaults), and builds a `runtimeContext{Cfg, API, WorkflowAPI,
-  Printer, Quiet}`. `requireAPIKey()` guards Repo-product commands.
+  file > defaults), and builds a `runtimeContext{Cfg, API, Printer, Quiet,
+  WorkflowClient}`. `requireAPIKey()` guards Repo-product commands.
   `ensureWorkflowAuth(ctx)` guards Workflow Studio commands: it validates
   that `APIKey` is set (the same key is used for both products). Both helpers
   return the same friendly error when the key is missing.
@@ -84,14 +84,12 @@ Studio).
   `newRunCmd()`, `newJobCmd()` as children. Doesn't hold any logic itself.
 - `cmd/app.go`, `cmd/run.go`, `cmd/job.go` — Workflow Studio subcommand
   trees, nested under `eds wf`. `app.go` holds `eds wf app create|list|show|
-  update|delete|deploy|deployments|status` (an **application** wires a
+  update|delete|deploy|deployments` (an **application** wires a
   repo+branch to a deploy pipeline; a **deployment** runs that pipeline and
   publishes it). `app create --repository` reuses `resolveRepoID` from
-  `repo.go` to accept either a Repo-product UUID or name. `app status` is a
-  convenience wrapper: it fetches the application (whose `run` field already
-  embeds stage/job status) plus its most recent deployment (for the live
-  URL) in one call. `run.go`/`job.go` are the lower-level primitives behind
-  it. `job.go`'s `logs` command reads the job-logs endpoint as SSE and
+  `repo.go` to accept either a Repo-product UUID or name. `run.go`/`job.go`
+  are the lower-level primitives for inspecting runs and streaming job
+  logs. `job.go`'s `logs` command reads the job-logs endpoint as SSE and
   prints each `data:` line to stdout.
   Note (observed empirically, not documented in the spec): `application.status`
   and `application.run.status` are separate lifecycles. Creating an
@@ -133,18 +131,14 @@ Studio).
   `/project/{projectID}/repository[ies]`. `ListRepositories` omits the
   `search` query param entirely when empty — the API treats an empty string
   as a literal (matches nothing) rather than a wildcard.
-- `internal/workflowapi/client.go` — the Workflow Studio counterpart to
-  `repoapi/client.go`: same `Do`/`APIError`/request-id shape, sends
-  `X-API-KEY` (the same key as Repo), has no built-in request timeout
-  (bounded by the caller's context instead, since `logs` can stay open for
-  a running job), and adds `Stream` for reading an SSE response body
-  line-by-line.
-- `internal/workflowapi/application.go`, `run.go`, `job.go` —
-  application/deployment, run/stage, and job request/response types plus
-  the API calls, all scoped under `/project/{projectID}/...`.
+- `internal/workflow_client/` — generated OpenAPI client for the Workflow
+  Studio API. `client.go` configures the HTTP client and sends `X-API-KEY`
+  (the same key as Repo). `api_services.go`, `api_workflows.go`, and
+  `api_pipelines.go` hold the application, run, and job API calls, all
+  scoped under `/project/{projectID}/...`.
 - `openapi-user.yaml` — OpenAPI (Swagger 2.0) spec for the Workflow Studio
   user API; the source of truth for request/response shapes when extending
-  `internal/workflowapi`.
+  `internal/workflow_client`.
 - `swagger/swagger.yaml` — OpenAPI spec for the upstream Repo API; the source
   of truth for request/response shapes when extending `internal/repoapi`.
   `swagger/swagger.ru.yaml` is a Russian-translated copy (all `summary`/

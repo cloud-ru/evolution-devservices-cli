@@ -120,7 +120,6 @@ eds wf app update <id> --branch B [--name N]          update name/branch
 eds wf app delete <id> [--force]                       delete an application
 eds wf app deploy <id>                                run the pipeline and publish
 eds wf app deployments <id>                           list publish history
-eds wf app status <id>                                run status + live URL
 
 eds wf run show <id>                          show a run's status, stages and jobs
 eds wf run stop <id>                          stop a running run
@@ -192,19 +191,19 @@ APP_ID=$(eds wf app create my-site --repository my-site --branch main --json | j
 eds wf app deploy "$APP_ID" --json | jq -r '.run_id'
 
 # 4. Poll status until it's done, then read the live URL
-eds wf app status "$APP_ID" --json | jq '{status: .application.status, url: .latest_deployment.url}'
+eds wf app show "$APP_ID" --json | jq '{status: .status, url: .repository_url}'
 ```
 
 If a deployment fails, drill into the failing job's logs:
 
 ```bash
-eds wf app status "$APP_ID" --json | jq -r '.application.run.stages[].jobs[] | select(.status=="failed") | .id' \
+eds wf app show "$APP_ID" --json | jq -r '.run.stages[].jobs[] | select(.status=="failed") | .id' \
   | xargs -I{} eds wf job logs {}
 ```
 
-`eds wf run` and `eds wf job` are the lower-level primitives behind `eds wf
-app status` — use them directly when you need to inspect or control a
-particular run (e.g. `eds wf run stop`) or stream job logs (`eds wf job logs`).
+`eds wf run` and `eds wf job` are the lower-level primitives for inspecting
+and controlling a particular run (e.g. `eds wf run stop`) or streaming job
+logs (`eds wf job logs`).
 
 ## File upload / push
 
@@ -273,14 +272,14 @@ cmd/
   version.go                    # `eds version`
   repo.go                       # `eds repo list|create|show|delete|clone`
   wf.go                         # `eds wf` parent command (groups app/run/job)
-  app.go                        # `eds wf app create|list|show|update|delete|deploy|deployments|status`
+  app.go                        # `eds wf app create|list|show|update|delete|deploy|deployments`
   run.go                        # `eds wf run show|stop`
   job.go                        # `eds wf job logs`
 internal/
   config/                       # disk config + env overrides
   output/                       # JSON / table formatting
   repoapi/                      # thin HTTP client for the Repo product API
-  workflowapi/                  # thin HTTP client for the Workflow Studio product API
+  workflow_client/              # generated OpenAPI client for the Workflow Studio product API
 scripts/
   install.sh                    # one-liner installer (GitHub Releases by default)
 skill/

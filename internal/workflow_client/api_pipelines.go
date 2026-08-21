@@ -22,7 +22,7 @@ import (
 // PipelinesAPIService PipelinesAPI service
 type PipelinesAPIService service
 
-type PipelinesAPIProjectProjectIdJobJobIdLogListGetRequest struct {
+type PipelinesAPIGetJobLogsRequest struct {
 	ctx        context.Context
 	ApiService *PipelinesAPIService
 	projectId  string
@@ -31,27 +31,27 @@ type PipelinesAPIProjectProjectIdJobJobIdLogListGetRequest struct {
 }
 
 // Request body
-func (r PipelinesAPIProjectProjectIdJobJobIdLogListGetRequest) Request(request GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestJobLogList) PipelinesAPIProjectProjectIdJobJobIdLogListGetRequest {
+func (r PipelinesAPIGetJobLogsRequest) Request(request GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestJobLogList) PipelinesAPIGetJobLogsRequest {
 	r.request = &request
 	return r
 }
 
-func (r PipelinesAPIProjectProjectIdJobJobIdLogListGetRequest) Execute() (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogList, *http.Response, error) {
-	return r.ApiService.ProjectProjectIdJobJobIdLogListGetExecute(r)
+func (r PipelinesAPIGetJobLogsRequest) Execute() (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogList, *http.Response, error) {
+	return r.ApiService.GetJobLogsExecute(r)
 }
 
 /*
-ProjectProjectIdJobJobIdLogListGet Get job logs
+GetJobLogs Get job logs
 
 Get job logs
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param projectId Project ID
 	@param jobId Job ID
-	@return PipelinesAPIProjectProjectIdJobJobIdLogListGetRequest
+	@return PipelinesAPIGetJobLogsRequest
 */
-func (a *PipelinesAPIService) ProjectProjectIdJobJobIdLogListGet(ctx context.Context, projectId string, jobId string) PipelinesAPIProjectProjectIdJobJobIdLogListGetRequest {
-	return PipelinesAPIProjectProjectIdJobJobIdLogListGetRequest{
+func (a *PipelinesAPIService) GetJobLogs(ctx context.Context, projectId string, jobId string) PipelinesAPIGetJobLogsRequest {
+	return PipelinesAPIGetJobLogsRequest{
 		ApiService: a,
 		ctx:        ctx,
 		projectId:  projectId,
@@ -62,7 +62,7 @@ func (a *PipelinesAPIService) ProjectProjectIdJobJobIdLogListGet(ctx context.Con
 // Execute executes the request
 //
 //	@return GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogList
-func (a *PipelinesAPIService) ProjectProjectIdJobJobIdLogListGetExecute(r PipelinesAPIProjectProjectIdJobJobIdLogListGetRequest) (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogList, *http.Response, error) {
+func (a *PipelinesAPIService) GetJobLogsExecute(r PipelinesAPIGetJobLogsRequest) (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogList, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
@@ -70,7 +70,7 @@ func (a *PipelinesAPIService) ProjectProjectIdJobJobIdLogListGetExecute(r Pipeli
 		localVarReturnValue *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogList
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PipelinesAPIService.ProjectProjectIdJobJobIdLogListGet")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PipelinesAPIService.GetJobLogs")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -199,7 +199,172 @@ func (a *PipelinesAPIService) ProjectProjectIdJobJobIdLogListGetExecute(r Pipeli
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type PipelinesAPIProjectProjectIdPipelinePipelineIdRunPostRequest struct {
+type PipelinesAPIGetRunRequest struct {
+	ctx        context.Context
+	ApiService *PipelinesAPIService
+	projectId  string
+	runId      string
+}
+
+func (r PipelinesAPIGetRunRequest) Execute() (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet, *http.Response, error) {
+	return r.ApiService.GetRunExecute(r)
+}
+
+/*
+GetRun Get run
+
+Get run
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param projectId Project ID
+	@param runId Run ID
+	@return PipelinesAPIGetRunRequest
+*/
+func (a *PipelinesAPIService) GetRun(ctx context.Context, projectId string, runId string) PipelinesAPIGetRunRequest {
+	return PipelinesAPIGetRunRequest{
+		ApiService: a,
+		ctx:        ctx,
+		projectId:  projectId,
+		runId:      runId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet
+func (a *PipelinesAPIService) GetRunExecute(r PipelinesAPIGetRunRequest) (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PipelinesAPIService.GetRun")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/project/{project_id}/run/{run_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"run_id"+"}", url.PathEscape(parameterValueToString(r.runId, "runId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["BearerAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsBadRequest
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsUnauthorized
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsNotFound
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 500 {
+			var v GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsInternal
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type PipelinesAPIRunPipelineRequest struct {
 	ctx        context.Context
 	ApiService *PipelinesAPIService
 	projectId  string
@@ -208,27 +373,27 @@ type PipelinesAPIProjectProjectIdPipelinePipelineIdRunPostRequest struct {
 }
 
 // Branch
-func (r PipelinesAPIProjectProjectIdPipelinePipelineIdRunPostRequest) Branch(branch string) PipelinesAPIProjectProjectIdPipelinePipelineIdRunPostRequest {
+func (r PipelinesAPIRunPipelineRequest) Branch(branch string) PipelinesAPIRunPipelineRequest {
 	r.branch = &branch
 	return r
 }
 
-func (r PipelinesAPIProjectProjectIdPipelinePipelineIdRunPostRequest) Execute() (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineRun, *http.Response, error) {
-	return r.ApiService.ProjectProjectIdPipelinePipelineIdRunPostExecute(r)
+func (r PipelinesAPIRunPipelineRequest) Execute() (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineRun, *http.Response, error) {
+	return r.ApiService.RunPipelineExecute(r)
 }
 
 /*
-ProjectProjectIdPipelinePipelineIdRunPost Run pipeline
+RunPipeline Run pipeline
 
 Run pipeline
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param projectId Project ID
 	@param pipelineId Pipeline ID
-	@return PipelinesAPIProjectProjectIdPipelinePipelineIdRunPostRequest
+	@return PipelinesAPIRunPipelineRequest
 */
-func (a *PipelinesAPIService) ProjectProjectIdPipelinePipelineIdRunPost(ctx context.Context, projectId string, pipelineId string) PipelinesAPIProjectProjectIdPipelinePipelineIdRunPostRequest {
-	return PipelinesAPIProjectProjectIdPipelinePipelineIdRunPostRequest{
+func (a *PipelinesAPIService) RunPipeline(ctx context.Context, projectId string, pipelineId string) PipelinesAPIRunPipelineRequest {
+	return PipelinesAPIRunPipelineRequest{
 		ApiService: a,
 		ctx:        ctx,
 		projectId:  projectId,
@@ -239,7 +404,7 @@ func (a *PipelinesAPIService) ProjectProjectIdPipelinePipelineIdRunPost(ctx cont
 // Execute executes the request
 //
 //	@return GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineRun
-func (a *PipelinesAPIService) ProjectProjectIdPipelinePipelineIdRunPostExecute(r PipelinesAPIProjectProjectIdPipelinePipelineIdRunPostRequest) (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineRun, *http.Response, error) {
+func (a *PipelinesAPIService) RunPipelineExecute(r PipelinesAPIRunPipelineRequest) (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineRun, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodPost
 		localVarPostBody    interface{}
@@ -247,7 +412,7 @@ func (a *PipelinesAPIService) ProjectProjectIdPipelinePipelineIdRunPostExecute(r
 		localVarReturnValue *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineRun
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PipelinesAPIService.ProjectProjectIdPipelinePipelineIdRunPost")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PipelinesAPIService.RunPipeline")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -375,194 +540,29 @@ func (a *PipelinesAPIService) ProjectProjectIdPipelinePipelineIdRunPostExecute(r
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type PipelinesAPIProjectProjectIdRunRunIdGetRequest struct {
+type PipelinesAPIStopRunRequest struct {
 	ctx        context.Context
 	ApiService *PipelinesAPIService
 	projectId  string
 	runId      string
 }
 
-func (r PipelinesAPIProjectProjectIdRunRunIdGetRequest) Execute() (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet, *http.Response, error) {
-	return r.ApiService.ProjectProjectIdRunRunIdGetExecute(r)
+func (r PipelinesAPIStopRunRequest) Execute() (map[string]interface{}, *http.Response, error) {
+	return r.ApiService.StopRunExecute(r)
 }
 
 /*
-ProjectProjectIdRunRunIdGet Get run
-
-Get run
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param projectId Project ID
-	@param runId Run ID
-	@return PipelinesAPIProjectProjectIdRunRunIdGetRequest
-*/
-func (a *PipelinesAPIService) ProjectProjectIdRunRunIdGet(ctx context.Context, projectId string, runId string) PipelinesAPIProjectProjectIdRunRunIdGetRequest {
-	return PipelinesAPIProjectProjectIdRunRunIdGetRequest{
-		ApiService: a,
-		ctx:        ctx,
-		projectId:  projectId,
-		runId:      runId,
-	}
-}
-
-// Execute executes the request
-//
-//	@return GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet
-func (a *PipelinesAPIService) ProjectProjectIdRunRunIdGetExecute(r PipelinesAPIProjectProjectIdRunRunIdGetRequest) (*GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PipelinesAPIService.ProjectProjectIdRunRunIdGet")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/project/{project_id}/run/{run_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"project_id"+"}", url.PathEscape(parameterValueToString(r.projectId, "projectId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"run_id"+"}", url.PathEscape(parameterValueToString(r.runId, "runId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.ctx != nil {
-		// API Key Authentication
-		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
-			if apiKey, ok := auth["BearerAuth"]; ok {
-				var key string
-				if apiKey.Prefix != "" {
-					key = apiKey.Prefix + " " + apiKey.Key
-				} else {
-					key = apiKey.Key
-				}
-				localVarHeaderParams["Authorization"] = key
-			}
-		}
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsBadRequest
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsUnauthorized
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsNotFound
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 500 {
-			var v GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsInternal
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type PipelinesAPIProjectProjectIdRunRunIdStopPostRequest struct {
-	ctx        context.Context
-	ApiService *PipelinesAPIService
-	projectId  string
-	runId      string
-}
-
-func (r PipelinesAPIProjectProjectIdRunRunIdStopPostRequest) Execute() (map[string]interface{}, *http.Response, error) {
-	return r.ApiService.ProjectProjectIdRunRunIdStopPostExecute(r)
-}
-
-/*
-ProjectProjectIdRunRunIdStopPost Stop run
+StopRun Stop run
 
 Stop run
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param projectId Project ID
 	@param runId Run ID
-	@return PipelinesAPIProjectProjectIdRunRunIdStopPostRequest
+	@return PipelinesAPIStopRunRequest
 */
-func (a *PipelinesAPIService) ProjectProjectIdRunRunIdStopPost(ctx context.Context, projectId string, runId string) PipelinesAPIProjectProjectIdRunRunIdStopPostRequest {
-	return PipelinesAPIProjectProjectIdRunRunIdStopPostRequest{
+func (a *PipelinesAPIService) StopRun(ctx context.Context, projectId string, runId string) PipelinesAPIStopRunRequest {
+	return PipelinesAPIStopRunRequest{
 		ApiService: a,
 		ctx:        ctx,
 		projectId:  projectId,
@@ -573,7 +573,7 @@ func (a *PipelinesAPIService) ProjectProjectIdRunRunIdStopPost(ctx context.Conte
 // Execute executes the request
 //
 //	@return map[string]interface{}
-func (a *PipelinesAPIService) ProjectProjectIdRunRunIdStopPostExecute(r PipelinesAPIProjectProjectIdRunRunIdStopPostRequest) (map[string]interface{}, *http.Response, error) {
+func (a *PipelinesAPIService) StopRunExecute(r PipelinesAPIStopRunRequest) (map[string]interface{}, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodPost
 		localVarPostBody    interface{}
@@ -581,7 +581,7 @@ func (a *PipelinesAPIService) ProjectProjectIdRunRunIdStopPostExecute(r Pipeline
 		localVarReturnValue map[string]interface{}
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PipelinesAPIService.ProjectProjectIdRunRunIdStopPost")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PipelinesAPIService.StopRun")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}

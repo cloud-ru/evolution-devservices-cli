@@ -33,7 +33,7 @@ linters:
     - embeddedstructfieldcheck # checks embedded types in structs
     - asciicheck # checks that your code does not contain non-ASCII identifiers
     - prealloc # [premature optimization, but can be used in some cases] finds slice declarations that could potentially be preallocated
-    #- wrapcheck # checks that errors returned from external packages are wrapped
+    - wrapcheck # checks that errors returned from external packages are wrapped
     #- goconst # finds repeated strings that could be replaced by a constant
     - testpackage # Linter that makes you use a separate _test package.
   settings:

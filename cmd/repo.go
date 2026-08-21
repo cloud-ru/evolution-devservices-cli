@@ -68,7 +68,7 @@ func newRepoListCmd() *cobra.Command {
 
 			resp, err := ctx.API.ListRepositories(cmd.Context(), opts)
 			if err != nil {
-				return err
+				return fmt.Errorf("api list repositories: %w", err)
 			}
 
 			if ctx.Printer.Format == 1 /* FormatJSON */ {
@@ -130,7 +130,7 @@ func newRepoCreateCmd() *cobra.Command {
 
 			r, err := ctx.API.CreateRepository(cmd.Context(), req)
 			if err != nil {
-				return err
+				return fmt.Errorf("api create repository: %w", err)
 			}
 
 			if !ctx.Quiet {
@@ -170,7 +170,7 @@ func newRepoShowCmd() *cobra.Command {
 
 			info, err := ctx.API.GetRepository(cmd.Context(), id)
 			if err != nil {
-				return err
+				return fmt.Errorf("api get repository: %w", err)
 			}
 
 			if ctx.Printer.Format == 1 /* FormatJSON */ {
@@ -230,7 +230,7 @@ func newRepoDeleteCmd() *cobra.Command {
 			}
 
 			if err := ctx.API.DeleteRepository(cmd.Context(), id); err != nil {
-				return err
+				return fmt.Errorf("api delete repository: %w", err)
 			}
 			fmt.Fprintf(cmd.OutOrStdout(), "Deleted repository %s\n", args[0])
 			return nil
@@ -276,7 +276,7 @@ the clone, as you would with any other git server.`,
 
 			info, err := ctx.API.GetRepository(cmd.Context(), id)
 			if err != nil {
-				return err
+				return fmt.Errorf("api get repository: %w", err)
 			}
 
 			cloneURL := info.Clone.HTTPS
@@ -331,7 +331,7 @@ func resolveRepoID(ctx context.Context, r *runtimeContext, ref string) (string, 
 		Limit:  10,
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("api list repositories: %w", err)
 	}
 	for _, repo := range resp.Repositories {
 		if strings.EqualFold(repo.Name, ref) {

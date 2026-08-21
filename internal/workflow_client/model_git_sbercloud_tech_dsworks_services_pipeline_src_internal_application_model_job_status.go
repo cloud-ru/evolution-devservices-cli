@@ -20,6 +20,7 @@ type GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJobStatus
 
 // List of git_sbercloud_tech_dsworks_services_pipeline_src_internal_application_model.JobStatus
 const (
+	JobStatusEmpty    GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJobStatus = ""
 	JobStatusPending  GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJobStatus = "pending"
 	JobStatusRunning  GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJobStatus = "running"
 	JobStatusDone     GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJobStatus = "done"
@@ -29,6 +30,7 @@ const (
 
 // All allowed values of GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJobStatus enum
 var AllowedGitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJobStatusEnumValues = []GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJobStatus{
+	"",
 	"pending",
 	"running",
 	"done",

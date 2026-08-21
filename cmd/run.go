@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-
-	"github.com/cloud-ru/evolution-devservices-cli/internal/output"
 )
 
 // newRunCmd creates the parent `eds wf run` command and all its subcommands.
@@ -37,29 +35,17 @@ func newRunShowCmd() *cobra.Command {
 				return err
 			}
 
-			run, err := ctx.WorkflowAPI.GetRun(cmd.Context(), args[0])
+			run, _, err := ctx.WorkflowClient.WorkflowsAPI.GetRun(cmd.Context(), ctx.ProjectID, args[0]).
+				Execute()
 			if err != nil {
-				return err
+				return fmt.Errorf("workflow client get run: %w", err)
 			}
 
-			if ctx.Printer.Format == output.FormatJSON {
-				return ctx.Printer.PrintJSON(run)
+			err = ctx.Printer.PrintJSON(run)
+			if err != nil {
+				return fmt.Errorf("print json run: %w", err)
 			}
 
-			ctx.Printer.KeyValue([][2]string{
-				{"id", run.ID},
-				{"pipeline_id", run.PipelineID},
-				{"branch", run.Branch},
-				{"status", string(run.Status)},
-				{"status_message", run.StatusMessage},
-				{"updated_at", output.HumanTime(run.UpdatedAt)},
-			})
-			for _, stage := range run.Stages {
-				fmt.Fprintf(cmd.OutOrStdout(), "\nstage %-24s %s\n", stage.Name, stage.Status)
-				for _, job := range stage.Jobs {
-					fmt.Fprintf(cmd.OutOrStdout(), "  job %-22s %s\n", job.Name, job.Status)
-				}
-			}
 			return nil
 		},
 	}
@@ -80,9 +66,11 @@ func newRunStopCmd() *cobra.Command {
 				return err
 			}
 
-			if err := ctx.WorkflowAPI.StopRun(cmd.Context(), args[0]); err != nil {
-				return err
+			_, _, err = ctx.WorkflowClient.WorkflowsAPI.StopRun(cmd.Context(), ctx.ProjectID, args[0]).Execute()
+			if err != nil {
+				return fmt.Errorf("stop run: %w", err)
 			}
+
 			fmt.Fprintf(cmd.OutOrStdout(), "Stopped run %s\n", args[0])
 			return nil
 		},

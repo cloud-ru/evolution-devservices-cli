@@ -45,7 +45,13 @@ func New(format Format) *Printer {
 func (p *Printer) PrintJSON(v any) error {
 	enc := json.NewEncoder(p.W)
 	enc.SetIndent("", "  ")
-	return enc.Encode(v)
+
+	err := enc.Encode(v)
+	if err != nil {
+		return fmt.Errorf("json encode %w", err)
+	}
+
+	return nil
 }
 
 // Table renders a human-readable table. Headers is the header row,
