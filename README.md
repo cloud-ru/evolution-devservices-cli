@@ -52,7 +52,7 @@ chmod +x eds && sudo mv eds /usr/local/bin/eds
 ```bash
 git clone git@github.com:cloud-ru/evolution-devservices-cli.git
 cd evolution-devservices-cli
-go install github.com/cloud-ru/evolution-devservices-cli@latest
+go install github.com/cloud-ru/evolution-devservices-cli/cmd/eds@latest
 # or
 make build           # ./bin/eds
 make build-all       # cross-compile darwin/linux × amd64/arm64 into ./dist/
@@ -293,9 +293,9 @@ make help          # list targets
 Project layout:
 
 ```
-main.go                         # entry point + ldflags-driven version
 cmd/
-  root.go                       # cobra root command (`eds`) + global flags
+  eds/main.go                    # entry point + ldflags-driven version
+  root.go                        # cobra root command (`eds`) + global flags
   helpers.go                    # config resolution, runtime context
   login.go                      # `eds login`
   config.go                     # `eds config`

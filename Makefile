@@ -53,7 +53,7 @@ build:
 	@mkdir -p $(BUILD_DIR)
 	CGO_ENABLED=$(CGO_ENABLED) go build $(GOFLAGS) \
 		-trimpath -ldflags '$(LDFLAGS)' \
-		-o $(BUILD_DIR)/$(BINARY) .
+		-o $(BUILD_DIR)/$(BINARY) ./cmd/eds
 	@echo "Built $(BUILD_DIR)/$(BINARY) (version=$(VERSION))"
 
 # Helper target - invoke recursively for each os/arch combination.
@@ -64,7 +64,7 @@ build-one:
 	$(eval EXE := $(if $(filter windows,$(GOOS)),.exe,))
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) \
 		go build $(GOFLAGS) -trimpath -ldflags '$(LDFLAGS)' \
-		-o $(DIST_DIR)/$(BINARY)-$(GOOS)-$(GOARCH)$(EXE) .
+		-o $(DIST_DIR)/$(BINARY)-$(GOOS)-$(GOARCH)$(EXE) ./cmd/eds
 	@echo "  ✔ $(DIST_DIR)/$(BINARY)-$(GOOS)-$(GOARCH)$(EXE)"
 
 .PHONY: build-all
@@ -148,7 +148,7 @@ upload-latest:
 .PHONY: install
 install:
 	CGO_ENABLED=$(CGO_ENABLED) go install $(GOFLAGS) \
-		-trimpath -ldflags '$(LDFLAGS)' $(PKG)
+		-trimpath -ldflags '$(LDFLAGS)' $(PKG)/cmd/eds
 
 .PHONY: test
 test:
