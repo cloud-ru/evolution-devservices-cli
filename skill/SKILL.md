@@ -1,6 +1,15 @@
 ---
 name: evolution-devservices-cli
 description: Manage cloud.ru developer tools products via the `eds` CLI — git repositories (Repo product, "eds repo") and deploy/publish pipelines (Workflow Studio product, "eds wf"). Use when the user asks to list, create, inspect, delete or clone repositories, to push/pull code, or to create/deploy/monitor a Workflow Studio application.
+required_env:
+  - EDS_API_KEY
+  - EDS_PROJECT_ID
+metadata:
+  openclaw:
+    requires:
+      env:
+        - EDS_API_KEY
+        - EDS_PROJECT_ID
 ---
 
 # Evolution DevServices CLI (eds) — Agent Skill
@@ -50,26 +59,26 @@ Every command supports `--json` for machine-readable output. When the
 output is piped to another command, JSON is selected automatically.
 Errors go to stderr and the process exits non-zero.
 
-| Command                                                                                                                                 | Purpose                                                                                                                                                     |
-|-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `eds version`                                                                                                                           | Print the installed CLI version                                                                                                                             |
-| `eds config`                                                                                                                            | Print effective configuration                                                                                                                               |
-| `eds repo list [--search S] [--sort name_asc\|name_desc\|updated_at_asc\|updated_at_desc] [--limit N] [--offset N] [--json]`            | List repositories in the configured project                                                                                                                 |
-| `eds repo create <name> [--description "..."] [--visibility private\|shadow] [--json]`                                                  | Create a new git repository                                                                                                                                 |
-| `eds repo show <id-or-name> [--json]`                                                                                                   | Show details: id, default_branch, size, clone URLs                                                                                                          |
-| `eds repo delete <id-or-name> [--force] [--json]`                                                                                       | Delete (irreversible; requires confirmation unless `--force`)                                                                                               |
-| `eds repo clone <id-or-name> [dir] [--ssh] [--target DIR]`                                                                              | Clone via local `git` CLI                                                                                                                                   |
-| `eds repo remote-add <id-or-name> [--name N] [--ssh]`                                                                                   | Wire an existing local checkout to it (`git remote add`, authenticated)                                                                                     |
-| `eds wf app create <name> --repository R\|--repository-url URL --branch B [--json]`                                                     | Create a Workflow Studio application from a repo + branch (auto-triggers first deploy)                                                                    |
-| `eds wf app list [--search S] [--sort created_at_asc\|created_at_desc] [--json]`                                                        | List applications                                                                                                                                           |
-| `eds wf app show <id> [--json]`                                                                                                         | Show application details (status, run_id, pipeline_id, ...)                                                                                                 |
-| `eds wf app update <id> --branch B [--name N] [--json]`                                                                                 | Update an application's name/branch                                                                                                                         |
-| `eds wf app delete <id> [--force] [--json]`                                                                                             | Delete an application and its deployments (irreversible)                                                                                                    |
-| `eds wf app deploy <id> [--json]`                                                                                                       | Run the pipeline and publish (the "deploy" action)                                                                                                          |
-| `eds wf app deployments <id> [--json]`                                                                                                  | List publish history for an application                                                                                                                     |
-| `eds wf run show <id> [--json]` / `eds wf run stop <id>`                                                                                | Inspect/control a pipeline run                                                                                                                              |
-| `eds wf job logs <id>`                                                                  | Stream job logs                                                                                                                                             |
-| `eds login --api-key <KEY> --project <ID> [--repo-api-url URL]`                                                                         | Persist credentials (one-time setup)                                                                                                                      |
+| Command                                                                                                                      | Purpose                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `eds version`                                                                                                                | Print the installed CLI version                                                        |
+| `eds config`                                                                                                                 | Print effective configuration                                                          |
+| `eds repo list [--search S] [--sort name_asc\|name_desc\|updated_at_asc\|updated_at_desc] [--limit N] [--offset N] [--json]` | List repositories in the configured project                                            |
+| `eds repo create <name> [--description "..."] [--visibility private\|shadow] [--json]`                                       | Create a new git repository                                                            |
+| `eds repo show <id-or-name> [--json]`                                                                                        | Show details: id, default_branch, size, clone URLs                                     |
+| `eds repo delete <id-or-name> [--force] [--json]`                                                                            | Delete (irreversible; requires confirmation unless `--force`)                          |
+| `eds repo clone <id-or-name> [dir] [--ssh] [--target DIR]`                                                                   | Clone via local `git` CLI                                                              |
+| `eds repo remote-add <id-or-name> [--name N] [--ssh]`                                                                        | Wire an existing local checkout to it (`git remote add`, authenticated)                |
+| `eds wf app create <name> --repository R\|--repository-url URL --branch B [--json]`                                          | Create a Workflow Studio application from a repo + branch (auto-triggers first deploy) |
+| `eds wf app list [--search S] [--sort created_at_asc\|created_at_desc] [--json]`                                             | List applications                                                                      |
+| `eds wf app show <id> [--json]`                                                                                              | Show application details (status, run_id, pipeline_id, ...)                            |
+| `eds wf app update <id> --branch B [--name N] [--json]`                                                                      | Update an application's name/branch                                                    |
+| `eds wf app delete <id> [--force] [--json]`                                                                                  | Delete an application and its deployments (irreversible)                               |
+| `eds wf app deploy <id> [--json]`                                                                                            | Run the pipeline and publish (the "deploy" action)                                     |
+| `eds wf app deployments <id> [--json]`                                                                                       | List publish history for an application                                                |
+| `eds wf run show <id> [--json]` / `eds wf run stop <id>`                                                                     | Inspect/control a pipeline run                                                         |
+| `eds wf job logs <id>`                                                                                                       | Stream job logs                                                                        |
+| `eds login --api-key <KEY> --project <ID> [--repo-api-url URL]`                                                              | Persist credentials (one-time setup)                                                   |
 
 The `<id-or-name>` argument on `eds repo *` and `--repository` on
 `eds wf app create` are resolved automatically: UUIDs are used as-is, names
