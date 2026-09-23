@@ -168,7 +168,7 @@ write errors to stderr in a single line:
 Error: api error 404: {"error_msg":"404 Not Found"}
 ```
 
-See [`skill/SKILL.md`](skill/SKILL.md) for the canonical Agent Skills
+See [`skills/eds/SKILL.md`](skills/eds/SKILL.md) for the canonical Agent Skills
 description that can be attached to an AI agent.
 
 ## Workflow Studio (deploy & publish)
@@ -312,8 +312,8 @@ internal/
   workflow_client/              # generated OpenAPI client for Workflow Studio
 scripts/
   install.sh                    # one-liner installer (GitHub Releases by default)
-skill/
-  SKILL.md                      # Agent Skills description
+skills/
+  eds/SKILL.md                  # Agent Skills description
 Makefile                        # build, build-all, release, upload, …
 ```
 
