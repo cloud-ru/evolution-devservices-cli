@@ -89,7 +89,7 @@ accepts either its id or its name) or an external git URL (--repository-url).`,
 				return fmt.Errorf("workflow client application post: %w", err)
 			}
 
-			return ctx.Printer.PrintJSON(app)
+			return ctx.Printer.Print(app)
 		},
 	}
 
@@ -132,7 +132,7 @@ func newAppListCmd() *cobra.Command {
 				return fmt.Errorf("workflow client application list: %w", err)
 			}
 
-			return ctx.Printer.PrintJSON(resp)
+			return ctx.Printer.Print(resp)
 		},
 	}
 
@@ -163,7 +163,7 @@ func newAppShowCmd() *cobra.Command {
 				return fmt.Errorf("workflow client get app: %w", err)
 			}
 
-			return ctx.Printer.PrintJSON(app)
+			return ctx.Printer.Print(app)
 		},
 	}
 	return cmd
@@ -282,7 +282,7 @@ follow progress, and check the "url" field once it succeeds.`,
 				return fmt.Errorf("workflow client deploy application: %w", err)
 			}
 
-			return ctx.Printer.PrintJSON(dep)
+			return ctx.Printer.Print(dep)
 		},
 	}
 	return cmd
@@ -321,7 +321,7 @@ func newAppDeploymentsCmd() *cobra.Command {
 				return fmt.Errorf("workflow client list application: %w", err)
 			}
 
-			return ctx.Printer.PrintJSON(resp)
+			return ctx.Printer.Print(resp)
 		},
 	}
 

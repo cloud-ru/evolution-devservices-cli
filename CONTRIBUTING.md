@@ -42,8 +42,8 @@ starting point for understanding how a change should fit in.
 In short:
 
 - One command per file under `cmd/`, thin HTTP clients under `internal/`.
-- Every subcommand that returns structured data supports both a table
-  (default on TTY) and `--json` output via `ctx.Printer`.
+- Every subcommand that returns structured data outputs JSON by default
+  (or YAML when `--yaml`) via `ctx.Printer`. `--quiet` suppresses all output.
 - New flags/env vars follow the existing product-scoping convention
   (`--repo-*`/`EDS_REPO_*`, `--wf-*`/`EDS_WF_*`; only genuinely
   cross-product settings stay unprefixed).

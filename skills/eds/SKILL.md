@@ -46,28 +46,28 @@ datasets, merge requests). Those are out of scope for this CLI.
 
 ## Tool contract
 
-Every command supports `--json` for machine-readable output. When the
-output is piped to another command, JSON is selected automatically.
+Every command outputs JSON by default. Use `--yaml` for YAML output.
+`--quiet` suppresses all output (useful for fire-and-forget calls from agents).
 Errors go to stderr and the process exits non-zero.
 
 | Command                                                                                                                                 | Purpose                                                                                                                                                     |
 |-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `eds version`                                                                                                                           | Print the installed CLI version                                                                                                                             |
 | `eds config`                                                                                                                            | Print effective configuration                                                                                                                               |
-| `eds repo list [--search S] [--sort name_asc\|name_desc\|updated_at_asc\|updated_at_desc] [--limit N] [--offset N] [--json]`            | List repositories in the configured project                                                                                                                 |
-| `eds repo create <name> [--description "..."] [--visibility private\|shadow] [--json]`                                                  | Create a new git repository                                                                                                                                 |
-| `eds repo show <id-or-name> [--json]`                                                                                                   | Show details: id, default_branch, size, clone URLs                                                                                                          |
-| `eds repo delete <id-or-name> [--force] [--json]`                                                                                       | Delete (irreversible; requires confirmation unless `--force`)                                                                                               |
+| `eds repo list [--search S] [--sort name_asc\|name_desc\|updated_at_asc\|updated_at_desc] [--limit N] [--offset N]`            | List repositories in the configured project                                                                                                                 |
+| `eds repo create <name> [--description "..."] [--visibility private\|shadow]`                                                  | Create a new git repository                                                                                                                                 |
+| `eds repo show <id-or-name>`                                                                                                   | Show details: id, default_branch, size, clone URLs                                                                                                          |
+| `eds repo delete <id-or-name> [--force]`                                                                                       | Delete (irreversible; requires confirmation unless `--force`)                                                                                               |
 | `eds repo clone <id-or-name> [dir] [--ssh] [--target DIR]`                                                                              | Clone via local `git` CLI                                                                                                                                   |
 | `eds repo remote-add <id-or-name> [--name N] [--ssh]`                                                                                   | Wire an existing local checkout to it (`git remote add`, authenticated)                                                                                     |
-| `eds wf app create <name> --repository R\|--repository-url URL --branch B [--json]`                                                     | Create a Workflow Studio application from a repo + branch (auto-triggers first deploy)                                                                    |
-| `eds wf app list [--search S] [--sort created_at_asc\|created_at_desc] [--json]`                                                        | List applications                                                                                                                                           |
-| `eds wf app show <id> [--json]`                                                                                                         | Show application details (status, run_id, pipeline_id, ...)                                                                                                 |
-| `eds wf app update <id> --branch B [--name N] [--json]`                                                                                 | Update an application's name/branch                                                                                                                         |
-| `eds wf app delete <id> [--force] [--json]`                                                                                             | Delete an application and its deployments (irreversible)                                                                                                    |
-| `eds wf app deploy <id> [--json]`                                                                                                       | Run the pipeline and publish (the "deploy" action)                                                                                                          |
-| `eds wf app deployments <id> [--json]`                                                                                                  | List publish history for an application                                                                                                                     |
-| `eds wf run show <id> [--json]` / `eds wf run stop <id>`                                                                                | Inspect/control a pipeline run                                                                                                                              |
+| `eds wf app create <name> --repository R\|--repository-url URL --branch B`                                                     | Create a Workflow Studio application from a repo + branch (auto-triggers first deploy)                                                                    |
+| `eds wf app list [--search S] [--sort created_at_asc\|created_at_desc]`                                                        | List applications                                                                                                                                           |
+| `eds wf app show <id>`                                                                                                         | Show application details (status, run_id, pipeline_id, ...)                                                                                                 |
+| `eds wf app update <id> --branch B [--name N]`                                                                                 | Update an application's name/branch                                                                                                                         |
+| `eds wf app delete <id> [--force]`                                                                                             | Delete an application and its deployments (irreversible)                                                                                                    |
+| `eds wf app deploy <id>`                                                                                                       | Run the pipeline and publish (the "deploy" action)                                                                                                          |
+| `eds wf app deployments <id>`                                                                                                  | List publish history for an application                                                                                                                     |
+| `eds wf run show <id>` / `eds wf run stop <id>`                                                                                | Inspect/control a pipeline run                                                                                                                              |
 | `eds wf job logs <id>`                                                                  | Stream job logs                                                                                                                                             |
 | `eds login --api-key <KEY> --project <ID> [--repo-api-url URL]`                                                                         | Persist credentials (one-time setup)                                                                                                                      |
 
@@ -205,7 +205,7 @@ echo "my-old-repo" | eds repo delete my-old-repo --force --json
 ### Inspect the active configuration
 
 ```bash
-eds config --json
+eds config
 # { "project_id": "...",
 #   "repo_api_url": "...", "api_key": "abcd…wxyz", "repo_git_host": "...",
 #   "wf_api_url": "..." }
@@ -287,7 +287,7 @@ eds wf app deploy "$APP_ID" --json | jq -r '.deployment.run_id'
 The CLI prints a single-line error to stderr and exits with a non-zero
 status on failure. Suggested agent policy:
 
-- **2xx**: parse stdout as JSON (when `--json`) or treat stdout as human-readable text.
+- **2xx**: parse stdout as JSON (or YAML when `--yaml`).
 - **non-zero**: read stderr, retry only on transient errors (timeouts, 5xx). Do **not**
   retry on 4xx — they indicate an agent bug (wrong id, missing key, etc.).
 

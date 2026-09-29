@@ -51,12 +51,7 @@ func newJobLogsCmd() *cobra.Command {
 				return fmt.Errorf("workflow client logs: %w", err)
 			}
 
-			err = ctx.Printer.PrintJSON(resp)
-			if err != nil {
-				return fmt.Errorf("print json: %w", err)
-			}
-
-			return nil
+			return ctx.Printer.Print(resp)
 		},
 	}
 
