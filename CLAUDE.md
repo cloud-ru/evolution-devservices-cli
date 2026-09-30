@@ -41,8 +41,8 @@ until tests are added. `make all` runs `lint test build` in sequence.
 Building directly without make:
 
 ```bash
-go build -o bin/eds .
-go run . <command>
+go build -o bin/eds ./cmd/eds
+go run ./cmd/eds <command>
 ```
 
 Version is injected at build time via `-ldflags "-X main.version=..."` (see
@@ -51,7 +51,7 @@ module path is `github.com/cloud-ru/evolution-devservices-cli`, matching the
 repo's actual GitHub location — unlike the earlier `evo` rebrand (which kept
 the pre-rename module path as a cosmetic-only, minimal-diff change), this
 rename moved the repo itself to a new GitHub org/name, so `go install
-github.com/cloud-ru/evolution-devservices-cli@latest` needs the module path
+github.com/cloud-ru/evolution-devservices-cli/cmd/eds@latest` needs the module path
 to match. The internal `Config` struct field names and JSON keys still keep
 their older spelling (see the `internal/config/config.go` entry below) —
 that part of the prior minimal-diff choice still applies, since those are
@@ -63,7 +63,7 @@ Cobra-based CLI, one command per file under `cmd/`, thin API client under
 `internal/repoapi/` (Repo product) and generated OpenAPI client under
 `internal/workflow_client/` (Workflow Studio).
 
-- `main.go` — entry point, wires `main.version` (ldflags) into `cmd.SetVersion`.
+- `cmd/eds/main.go` — entry point, wires `main.version` (ldflags) into `cmd.SetVersion`.
 - `cmd/root.go` — builds the root `eds` command, registers global persistent
   flags. Product-scoped: `--repo-api-url`, `--repo-git-host`
   (Repo product); `--wf-api-url` (Workflow Studio). Platform-level (shared,
