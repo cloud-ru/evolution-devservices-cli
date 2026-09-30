@@ -48,7 +48,7 @@ In short:
   (`--repo-*`/`EDS_REPO_*`, `--wf-*`/`EDS_WF_*`; only genuinely
   cross-product settings stay unprefixed).
 - When the CLI's user-facing command surface changes, update `README.md`'s
-  Commands section and `skill/SKILL.md` in the same change.
+  Commands section and `skills/eds/SKILL.md` in the same change.
 
 ## Submitting a change
 

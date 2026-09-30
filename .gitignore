@@ -22,3 +22,5 @@
 /swagger/
 openapi*
 internal/workflow_client/*.md
+
+.memsearch/

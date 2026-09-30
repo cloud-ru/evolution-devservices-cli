@@ -17,7 +17,7 @@ sent as `X-API-KEY`. `--project`/`EDS_PROJECT_ID` is the only other platform-lev
 (shared, unprefixed) setting.
 
 The CLI is explicitly designed to be **agent-friendly**: every command has
-stable `--json` output, config comes from env vars, and `skill/SKILL.md`
+stable `--json` output, config comes from env vars, and `skills/eds/SKILL.md`
 documents the CLI's contract for AI agents driving it. The primary
 agent-facing scenario is *ship a vibe-coded app*: `eds repo create` +
 `git push` gets code hosted, `eds wf app create` publishes it (auto-deploy
@@ -148,7 +148,7 @@ the API client and printer.
   `cloud-ru/evolution-devservices-cli` by default and installs as `eds`;
   `EDS_CLI_BASE_URL`/`--base-url` points it at a custom mirror (e.g. the
   optional S3 upload from `make upload`) instead.
-- `skill/SKILL.md` — Agent Skills description of the CLI's command surface,
+- `skills/eds/SKILL.md` — Agent Skills description of the CLI's command surface,
   config precedence and error-handling contract for AI agents. Keep this in
   sync with `cmd/` when commands/flags change, since agents rely on it
   verbatim.
@@ -185,5 +185,5 @@ the API client and printer.
   `EXPOSE 8080` instead. Confirmed empirically end-to-end against prod.
 - When the CLI's user-facing command surface changes (new command, new flag,
   changed defaults), update `README.md`'s Commands section and
-  `skill/SKILL.md` in the same change — both are hand-maintained docs that
+  `skills/eds/SKILL.md` in the same change — both are hand-maintained docs that
   will drift silently otherwise.
