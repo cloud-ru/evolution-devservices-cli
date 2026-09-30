@@ -18,7 +18,6 @@ type runtimeContext struct {
 	Cfg            *config.Config
 	API            *repoapi.Client
 	Printer        *output.Printer
-	Quiet          bool
 	ProjectID      string
 	WorkflowClient *workflowclient.APIClient
 }
@@ -48,12 +47,12 @@ func resolveContext(cmd *cobra.Command) (*runtimeContext, error) {
 		cfg.WorkflowAPIURL = v
 	}
 
-	wantJSON, _ := cmd.Flags().GetBool("json")
+	wantYaml, _ := cmd.Flags().GetBool("yaml")
 	quiet, _ := cmd.Flags().GetBool("quiet")
 
-	format := output.FormatAuto
-	if wantJSON {
-		format = output.FormatJSON
+	format := output.FormatJSON
+	if wantYaml {
+		format = output.FormatYAML
 	}
 
 	workflowClientCfg := workflowclient.NewConfiguration()
@@ -63,8 +62,7 @@ func resolveContext(cmd *cobra.Command) (*runtimeContext, error) {
 	rt := &runtimeContext{
 		Cfg:            cfg,
 		API:            repoapi.New(cfg.APIURL, cfg.APIKey, cfg.ProjectID),
-		Printer:        output.New(format),
-		Quiet:          quiet,
+		Printer:        output.New(format, quiet),
 		ProjectID:      cfg.ProjectID,
 		WorkflowClient: workflowclient.NewAPIClient(workflowClientCfg),
 	}

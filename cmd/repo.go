@@ -12,7 +12,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 
-	"github.com/cloud-ru/evolution-devservices-cli/internal/output"
 	"github.com/cloud-ru/evolution-devservices-cli/internal/repoapi"
 )
 
@@ -73,24 +72,7 @@ func newRepoListCmd() *cobra.Command {
 				return fmt.Errorf("api list repositories: %w", err)
 			}
 
-			if ctx.Printer.Format == output.FormatJSON {
-				return ctx.Printer.PrintJSON(resp)
-			}
-
-			headers := []string{"ID", "NAME", "TYPE", "VISIBILITY", "UPDATED"}
-			rows := make([][]string, 0, len(resp.Repositories))
-			for _, r := range resp.Repositories {
-				rows = append(rows, []string{
-					r.ID,
-					r.Name,
-					r.Type,
-					r.Visibility,
-					output.HumanTime(r.UpdatedAt),
-				})
-			}
-			ctx.Printer.Table(headers, rows)
-			fmt.Fprintf(cmd.OutOrStdout(), "Showing %d of %d\n", len(resp.Repositories), resp.Total)
-			return nil
+			return ctx.Printer.Print(resp)
 		},
 	}
 
@@ -135,11 +117,7 @@ func newRepoCreateCmd() *cobra.Command {
 				return fmt.Errorf("api create repository: %w", err)
 			}
 
-			if !ctx.Quiet {
-				fmt.Fprintf(cmd.OutOrStdout(),
-					"Created repository %q (id=%s)\n", r.Name, r.ID)
-			}
-			return ctx.Printer.PrintJSON(r)
+			return ctx.Printer.Print(r)
 		},
 	}
 
@@ -175,24 +153,7 @@ func newRepoShowCmd() *cobra.Command {
 				return fmt.Errorf("api get repository: %w", err)
 			}
 
-			if ctx.Printer.Format == output.FormatJSON {
-				return ctx.Printer.PrintJSON(info)
-			}
-			ctx.Printer.KeyValue([][2]string{
-				{"id", info.ID},
-				{"name", info.Name},
-				{"description", info.Description},
-				{"type", info.Type},
-				{"default_branch", info.DefaultBranch},
-				{"branches", fmt.Sprintf("%d", info.BranchesCount)},
-				{"commits", fmt.Sprintf("%d", info.CommitsCount)},
-				{"size", output.HumanSize(info.Size)},
-				{"created_at", output.HumanTime(info.CreatedAt)},
-				{"updated_at", output.HumanTime(info.UpdatedAt)},
-				{"clone_https", info.Clone.HTTPS},
-				{"clone_ssh", info.Clone.SSH},
-			})
-			return nil
+			return ctx.Printer.Print(info)
 		},
 	}
 	return cmd
@@ -295,7 +256,6 @@ the clone, as you would with any other git server.`,
 			// the URL so clone/push work standalone, without relying on a
 			// git credential helper or ~/.netrc being pre-configured in the
 			// environment (agents/CI have neither).
-			displayCloneURL := cloneURL
 			if !useSSH {
 				cloneURL = withBasicAuth(cloneURL, ctx.Cfg.APIKey)
 			}
@@ -306,14 +266,8 @@ the clone, as you would with any other git server.`,
 			}
 
 			gitArgs := []string{"clone", cloneURL}
-			displayArgs := []string{"clone", displayCloneURL}
 			if dst != "" {
 				gitArgs = append(gitArgs, dst)
-				displayArgs = append(displayArgs, dst)
-			}
-
-			if !ctx.Quiet {
-				fmt.Fprintf(cmd.OutOrStdout(), "Running: git %s\n", strings.Join(displayArgs, " "))
 			}
 
 			c := exec.CommandContext(cmd.Context(), "git", gitArgs...)
@@ -378,13 +332,8 @@ made the remote). If you don't have a local checkout yet, use
 				return fmt.Errorf("repository has no clone url")
 			}
 
-			displayURL := remoteURL
 			if !useSSH {
 				remoteURL = withBasicAuth(remoteURL, ctx.Cfg.APIKey)
-			}
-
-			if !ctx.Quiet {
-				fmt.Fprintf(cmd.OutOrStdout(), "Running: git remote add %s %s\n", remoteName, displayURL)
 			}
 
 			c := exec.CommandContext(cmd.Context(), "git", "remote", "add", remoteName, remoteURL)

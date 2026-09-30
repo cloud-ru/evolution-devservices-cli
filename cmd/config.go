@@ -18,14 +18,13 @@ variables. Useful to debug "why is my CLI pointing at the wrong host?".`,
 				return err
 			}
 
-			ctx.Printer.KeyValue([][2]string{
-				{"project_id", ctx.Cfg.ProjectID},
-				{"repo_api_url", ctx.Cfg.APIURL},
-				{"api_key", maskKey(ctx.Cfg.APIKey)},
-				{"repo_git_host", ctx.Cfg.GitHost},
-				{"wf_api_url", ctx.Cfg.WorkflowAPIURL},
+			return ctx.Printer.Print(map[string]any{
+				"project_id":    ctx.Cfg.ProjectID,
+				"repo_api_url":  ctx.Cfg.APIURL,
+				"api_key":       maskKey(ctx.Cfg.APIKey),
+				"repo_git_host": ctx.Cfg.GitHost,
+				"wf_api_url":    ctx.Cfg.WorkflowAPIURL,
 			})
-			return nil
 		},
 	}
 	return cmd

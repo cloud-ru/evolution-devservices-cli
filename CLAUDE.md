@@ -16,8 +16,8 @@ Both products are authenticated with the same API key (`--api-key`/`EDS_API_KEY`
 sent as `X-API-KEY`. `--project`/`EDS_PROJECT_ID` is the only other platform-level
 (shared, unprefixed) setting.
 
-The CLI is explicitly designed to be **agent-friendly**: every command has
-stable `--json` output, config comes from env vars, and `skills/eds/SKILL.md`
+The CLI is explicitly designed to be **agent-friendly**: every command outputs
+stable JSON by default, config comes from env vars, and `skills/eds/SKILL.md`
 documents the CLI's contract for AI agents driving it. The primary
 agent-facing scenario is *ship a vibe-coded app*: `eds repo create` +
 `git push` gets code hosted, `eds wf app create` publishes it (auto-deploy
@@ -67,7 +67,8 @@ Cobra-based CLI, one command per file under `cmd/`, thin API client under
 - `cmd/root.go` — builds the root `eds` command, registers global persistent
   flags. Product-scoped: `--repo-api-url`, `--repo-git-host`
   (Repo product); `--wf-api-url` (Workflow Studio). Platform-level (shared,
-  unprefixed): `--project`, `--api-key`. Plus `--json`, `--quiet`.
+  unprefixed): `--project`, `--api-key`. Plus `--yaml`, `--quiet`
+  (`--json` is a backward-compatible no-op, since JSON is the default).
 the API client and printer.
 - `cmd/helpers.go` — `resolveContext(cmd)` is the entry point every subcommand
   calls first. It loads config, layers flag overrides on top (flags > env >
@@ -111,11 +112,10 @@ the API client and printer.
   their pre-rename spelling — only the user-facing CLI flags/env vars/command
   names follow the `eds`/`repo`/`wf` product split; this is a deliberate
   minimal-diff choice, not an oversight.
-- `internal/output/output.go` — `Printer` with `FormatAuto` (TTY -> table,
-  pipe -> JSON), `FormatTable`, `FormatJSON`. All list/show commands render
-  through `Printer.Table` / `Printer.KeyValue` / `Printer.PrintJSON` so both
-  output modes stay in sync from one call site. Also has `HumanTime` /
-  `HumanSize` formatters.
+- `internal/output/output.go` — `Printer` outputs JSON by default or YAML
+  when `--yaml` is passed. `--quiet` suppresses all printer output. All
+  commands render through `Printer.Print(v)` so output stays consistent.
+  The `--json` flag is retained as a backward-compatible no-op.
 - `internal/repoapi/client.go` — generic authenticated HTTP client (`Do`),
   sends `X-API-KEY`, decodes JSON, maps non-2xx responses to
   `*APIError` (tries `error`, `message`, and per-field `errors` response
@@ -159,9 +159,9 @@ the API client and printer.
   If it hits a Repo-product API, call `ctx.requireAPIKey()`. If it hits a
   Workflow Studio API, call `ctx.ensureWorkflowAuth(cmd.Context())` — both
   validate that `EDS_API_KEY` is set.
-- Repo subcommands that return structured data support both table (default
-  on TTY) and `--json` output via `ctx.Printer`. Workflow Studio subcommands
-  currently output JSON only.
+- Repo subcommands and Workflow Studio subcommands both output JSON by
+  default via `ctx.Printer`. Use `--yaml` for YAML output. `--quiet`
+  suppresses all printer output.
 - `eds repo` commands (and `eds wf app create --repository`) accept either a
   repository UUID or a name (`resolveRepoID` / `looksLikeUUID`); don't
   require callers to look up IDs first.

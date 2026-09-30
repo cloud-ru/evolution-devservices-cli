@@ -10,12 +10,13 @@ developer tools products. It currently covers two products:
 Repo and Workflow Studio are independent products, but both are authenticated
 with the same API key (`EDS_API_KEY`) via `X-API-KEY`. `eds` is just the
 platform CLI they're both driven through. Every command is designed to be safely
-driven by automation and AI agents: stable `--json` output, environment variables
+driven by automation and AI agents: JSON output by default, environment variables
 for secrets.
 
 - Single static binary (Go, no runtime dependencies).
 - Reads the API key from `EDS_API_KEY` or from `~/.config/eds/config.json`.
-- Outputs JSON when piped, pretty tables on a TTY (`--json` to force).
+- Outputs JSON by default. Use `--yaml` for YAML output. `--quiet` suppresses
+  all output (useful for fire-and-forget calls from agents).
 - Repo uses the local `git` CLI for clone. Both products authenticate with
   `X-API-KEY`. `eds repo clone` embeds the API key as HTTP Basic Auth
   credentials directly into the smart-HTTP URL it passes to `git clone`, so
@@ -307,7 +308,7 @@ cmd/
   job.go                        # `eds wf job logs`
 internal/
   config/                       # disk config + env overrides
-  output/                       # JSON / table formatting
+  output/                       # JSON / YAML formatting
   repoapi/                      # thin HTTP client for the Repo product API
   workflow_client/              # generated OpenAPI client for Workflow Studio
 scripts/

@@ -40,6 +40,8 @@ It is designed to be safely driven by automation and AI agents via the
 
 	root.PersistentFlags().Bool("json", false,
 		"force JSON output")
+	root.PersistentFlags().Bool("yaml", false,
+		"force YAML output")
 	root.PersistentFlags().BoolP("quiet", "q", false,
 		"suppress non-essential output")
 

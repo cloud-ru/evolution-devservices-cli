@@ -41,12 +41,7 @@ func newRunShowCmd() *cobra.Command {
 				return fmt.Errorf("workflow client get run: %w", err)
 			}
 
-			err = ctx.Printer.PrintJSON(run)
-			if err != nil {
-				return fmt.Errorf("print json run: %w", err)
-			}
-
-			return nil
+			return ctx.Printer.Print(run)
 		},
 	}
 	return cmd
