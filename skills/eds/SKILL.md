@@ -109,16 +109,25 @@ The skill's runtime should arrange for these before the first call.
 
 ## Installation inside the agent's sandbox
 
+**macOS / Linux:**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/cloud-ru/evolution-devservices-cli/main/scripts/install.sh | bash
 export PATH="$HOME/.local/bin:$PATH"
 eds version   # smoke-test
 ```
 
-The installer detects the platform (darwin/linux × amd64/arm64),
-downloads the matching binary into `~/.local/bin/eds`, and verifies it.
+**Windows (PowerShell):**
 
-Supported platforms: **Linux + macOS** (developers locally + CI).
+```powershell
+iwr -useb https://raw.githubusercontent.com/cloud-ru/evolution-devservices-cli/main/scripts/install.ps1 | iex
+eds version   # smoke-test
+```
+
+The installer detects the platform (darwin/linux/windows × amd64/arm64),
+downloads the matching binary, and verifies it.
+
+Supported platforms: **Linux + macOS + Windows** (developers locally + CI).
 
 ## Recipes
 
