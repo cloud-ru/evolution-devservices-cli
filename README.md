@@ -28,9 +28,18 @@ for secrets.
 
 ### From a GitHub Release (recommended)
 
+**macOS / Linux:**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/cloud-ru/evolution-devservices-cli/main/scripts/install.sh | bash
 export PATH="$HOME/.local/bin:$PATH"
+eds version
+```
+
+**Windows (PowerShell):**
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/cloud-ru/evolution-devservices-cli/main/scripts/install.ps1 | iex
 eds version
 ```
 
@@ -42,7 +51,7 @@ You can also grab a binary directly from the
 [releases page](https://github.com/cloud-ru/evolution-devservices-cli/releases/latest):
 
 ```bash
-# pick eds-<os>-<arch> for your platform, e.g. eds-darwin-arm64, eds-linux-amd64
+# pick eds-<os>-<arch> for your platform, e.g. eds-darwin-arm64, eds-linux-amd64, eds-windows-amd64.exe
 curl -fsSL -o eds \
   https://github.com/cloud-ru/evolution-devservices-cli/releases/latest/download/eds-darwin-arm64
 chmod +x eds && sudo mv eds /usr/local/bin/eds
@@ -56,11 +65,11 @@ cd evolution-devservices-cli
 go install github.com/cloud-ru/evolution-devservices-cli/cmd/eds@latest
 # or
 make build           # ./bin/eds
-make build-all       # cross-compile darwin/linux × amd64/arm64 into ./dist/
+make build-all       # cross-compile darwin/linux/windows × amd64/arm64 into ./dist/
 ```
 
-> Target platforms: **Linux + macOS** (developers locally + CI).
-> Override the matrix if you ever need to: `make build-all OSES="linux darwin" ARCHS="amd64 arm64"`.
+> Target platforms: **Linux + macOS + Windows** (developers locally + CI).
+> Override the matrix if you ever need to: `make build-all OSES="linux darwin windows" ARCHS="amd64 arm64"`.
 
 ## Configuration
 
@@ -278,6 +287,10 @@ make upload BUCKET=my-bucket PREFIX=evolution-devservices-cli VERSION=v0.2.0
 
 curl -fsSL https://storage.cloud.ru/my-bucket/evolution-devservices-cli/install.sh | \
   EDS_CLI_BASE_URL=https://storage.cloud.ru/my-bucket/evolution-devservices-cli bash
+
+# Or on Windows:
+$env:EDS_CLI_BASE_URL = "https://storage.cloud.ru/my-bucket/evolution-devservices-cli"
+iwr -useb https://storage.cloud.ru/my-bucket/evolution-devservices-cli/install.ps1 | iex
 ```
 
 ## Development

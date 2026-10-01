@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Self-installer for the Evolution DevServices CLI (eds).
 #
+# For Windows, use install.ps1 instead:
+#   iwr -useb https://raw.githubusercontent.com/cloud-ru/evolution-devservices-cli/main/scripts/install.ps1 | iex
+#
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/cloud-ru/evolution-devservices-cli/main/scripts/install.sh | bash
 #   EDS_CLI_VERSION=v0.2.0 bash install.sh

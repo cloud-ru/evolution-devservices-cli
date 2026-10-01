@@ -28,8 +28,8 @@ PKG           := github.com/cloud-ru/evolution-devservices-cli
 BUILD_DIR     := bin
 DIST_DIR      := dist
 
-# Target platforms: Linux + macOS (developers locally + CI runners).
-DEFAULT_OSES  := darwin linux
+# Target platforms: Linux + macOS + Windows (developers locally + CI runners).
+DEFAULT_OSES  := darwin linux windows
 DEFAULT_ARCHS := amd64 arm64
 
 OSES          ?= $(DEFAULT_OSES)
@@ -103,6 +103,7 @@ release: clean build-all
 #   s3://BUCKET/PREFIX/VERSION/eds-<os>-<arch>[.exe]
 #   s3://BUCKET/PREFIX/latest                  # contains VERSION
 #   s3://BUCKET/PREFIX/install.sh              # copy of scripts/install.sh
+#   s3://BUCKET/PREFIX/install.ps1             # copy of scripts/install.ps1
 #
 # Usage:
 #   make upload BUCKET=my-bucket PREFIX=evolution-devservices-cli VERSION=v0.2.0
@@ -128,6 +129,9 @@ upload: build-all
 	@aws $(S3_OPTS) s3 cp scripts/install.sh s3://$(BUCKET)/$(PREFIX)/install.sh \
 	  --acl public-read >/dev/null && \
 	  echo "  ✔ s3://$(BUCKET)/$(PREFIX)/install.sh"
+	@aws $(S3_OPTS) s3 cp scripts/install.ps1 s3://$(BUCKET)/$(PREFIX)/install.ps1 \
+	  --acl public-read >/dev/null && \
+	  echo "  ✔ s3://$(BUCKET)/$(PREFIX)/install.ps1"
 	@printf "%s\n" "$(VERSION)" > $(DIST_DIR)/.latest && \
 	  aws $(S3_OPTS) s3 cp $(DIST_DIR)/.latest s3://$(BUCKET)/$(PREFIX)/latest \
 	    --acl public-read --content-type "text/plain" >/dev/null && \
@@ -166,7 +170,7 @@ clean:
 help:
 	@echo "Targets:"
 	@echo "  build           build for the current platform into ./bin/"
-	@echo "  build-all       cross-compile darwin/linux × amd64/arm64 into ./dist/"
+	@echo "  build-all       cross-compile darwin/linux/windows × amd64/arm64 into ./dist/"
 	@echo "  build-one       helper for build-all (GOOS=... GOARCH=...)"
 	@echo "  release         build-all + sha256 checksums"
 	@echo "  upload          build-all + publish to S3 (BUCKET=... VERSION=...)"
