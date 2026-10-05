@@ -19,7 +19,7 @@ cd evolution-devservices-cli
 make build           # ./bin/eds
 ```
 
-Go 1.22+ is required. Target platforms are Linux + macOS only.
+Go 1.27+ is required. Target platforms are Linux + macOS + Windows.
 
 Useful targets:
 

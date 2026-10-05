@@ -1,28 +1,3 @@
-# Makefile for the Evolution DevServices CLI (eds).
-#
-# Targets:
-#   make build         - build for the current GOOS/GOARCH into ./bin/eds
-#   make build-all     - cross-compile the default matrix into ./dist/
-#   make build-one     - helper invoked by build-all (GOOS=... GOARCH=...)
-#   make clean         - remove ./bin and ./dist
-#   make test          - run `go test ./...`
-#   make tidy          - run `go mod tidy`
-#   make install       - `go install` into $GOBIN
-#   make release       - build-all + sha256 sums
-#   make upload        - build-all + publish to S3-compatible storage
-#   make upload-latest - only update the `latest` pointer in the bucket
-#   make help          - print the list of targets
-#
-# GitHub Releases (primary distribution channel) are cut manually or via CI
-# with `gh release create <tag> dist/* --generate-notes` after `make release`.
-# `make upload`/`make upload-latest` are for an optional secondary mirror on
-# S3-compatible storage.
-#
-# Overrides:
-#   make build-all OSES="linux darwin" ARCHS="amd64 arm64"
-#   make build VERSION=v0.2.0
-#   make upload BUCKET=my-bucket PREFIX=evolution-devservices-cli VERSION=v0.2.0
-
 BINARY        := eds
 PKG           := github.com/cloud-ru/evolution-devservices-cli
 BUILD_DIR     := bin
@@ -149,6 +124,14 @@ upload-latest:
 	  rm -f $(DIST_DIR)/.latest && \
 	  echo "  ✔ latest -> $(VERSION)"
 
+.PHONY: goreleaser-build
+goreleaser-build: clean
+	goreleaser build --snapshot --clean
+
+.PHONY: goreleaser-release
+goreleaser-release: clean
+	goreleaser release --clean
+
 .PHONY: install
 install:
 	CGO_ENABLED=$(CGO_ENABLED) go install $(GOFLAGS) \
@@ -172,7 +155,9 @@ help:
 	@echo "  build           build for the current platform into ./bin/"
 	@echo "  build-all       cross-compile darwin/linux/windows × amd64/arm64 into ./dist/"
 	@echo "  build-one       helper for build-all (GOOS=... GOARCH=...)"
-	@echo "  release         build-all + sha256 checksums"
+	@echo "  goreleaser-build   local snapshot build via GoReleaser (into ./dist/)"
+	@echo "  goreleaser-release full release via GoReleaser (requires a git tag)"
+	@echo "  release            build-all + sha256 checksums (legacy)"
 	@echo "  upload          build-all + publish to S3 (BUCKET=... VERSION=...)"
 	@echo "  upload-latest   only update the 'latest' pointer in the bucket"
 	@echo "  install         go install into \$$GOBIN"

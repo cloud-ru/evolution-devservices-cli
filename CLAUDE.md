@@ -175,8 +175,8 @@ the API client and printer.
   stderr by `cmd.Execute()` (root sets `SilenceUsage`/`SilenceErrors`) — keep
   error messages one line and actionable (see `requireAPIKey`'s message as
   the template).
-- Target platforms are Linux + macOS only (`DEFAULT_OSES := darwin linux` in
-  the Makefile); don't add Windows-specific code paths without updating that.
+- Target platforms are Linux + macOS + Windows (`DEFAULT_OSES := darwin linux windows` in
+  the Makefile).
 - If you ever scaffold a `Dockerfile` for a Workflow Studio deploy test
   (fixtures, examples, docs), it must run as non-root with a read-only-ish
   root filesystem -- that's what the Container Apps runtime enforces.

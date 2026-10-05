@@ -66,10 +66,12 @@ go install github.com/cloud-ru/evolution-devservices-cli/cmd/eds@latest
 # or
 make build           # ./bin/eds
 make build-all       # cross-compile darwin/linux/windows × amd64/arm64 into ./dist/
+# or, with GoReleaser (https://goreleaser.com)
+make goreleaser-build   # snapshot build into ./dist/
 ```
 
 > Target platforms: **Linux + macOS + Windows** (developers locally + CI).
-> Override the matrix if you ever need to: `make build-all OSES="linux darwin windows" ARCHS="amd64 arm64"`.
+> Override the matrix if you ever need to: `make build-all OSES="linux darwin" ARCHS="amd64 arm64"`.
 
 ## Configuration
 
@@ -264,6 +266,8 @@ ambient SSH setup the environment provides.
 Releases are published on
 [GitHub Releases](https://github.com/cloud-ru/evolution-devservices-cli/releases).
 
+### Manual release (Makefile)
+
 ```bash
 # cross-compile everything into ./dist/ + sha256 checksums
 make release
@@ -271,6 +275,31 @@ make release
 # tag, then cut the release with the built artifacts
 git tag v0.2.0 && git push origin v0.2.0
 gh release create v0.2.0 dist/* --generate-notes
+```
+
+### GoReleaser release (recommended)
+
+This project includes a [GoReleaser](https://goreleaser.com) configuration
+(`.goreleaser.yaml`) that mirrors the Makefile build matrix and produces the
+same artifacts:
+
+```bash
+# Local snapshot build (no tag required, produces ./dist/)
+make goreleaser-build
+
+# Full release — requires a git tag; builds, checksums, and uploads to GitHub
+# (draft release; publish manually or enable auto-publish in .goreleaser.yaml)
+git tag v0.2.0 && git push origin v0.2.0
+make goreleaser-release
+```
+
+GoReleaser requires the `goreleaser` CLI to be installed:
+
+```bash
+# macOS / Linux
+brew install goreleaser
+# or via Go
+go install github.com/goreleaser/goreleaser/v2@latest
 ```
 
 `scripts/install.sh` downloads from the latest GitHub Release by default.
@@ -300,6 +329,7 @@ make lint
 make test          # go test ./...
 make build         # current platform into ./bin/
 make build-all     # full matrix into ./dist/
+make goreleaser-build  # snapshot build via GoReleaser into ./dist/
 make clean         # remove ./bin and ./dist
 make help          # list targets
 ```
