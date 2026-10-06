@@ -30,7 +30,7 @@ const DefaultAPIURL = "https://devtools.api.cloud.ru/repo/api/v1"
 const DefaultGitHost = "https://repo.cloud.ru/"
 
 // DefaultWorkflowAPIURL is the Workflow Studio user API base URL.
-const DefaultWorkflowAPIURL = "https://pipeline.cloud.ru/public-api/v1"
+const DefaultWorkflowAPIURL = "https://devtools.api.cloud.ru/workflow/v1"
 
 // Load reads the config from disk, applies defaults and environment overrides.
 // Environment variables take precedence over file values.
