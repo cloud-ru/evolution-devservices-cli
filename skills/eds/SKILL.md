@@ -88,7 +88,7 @@ Precedence (lowest → highest):
 
 1. Built-in defaults: `api_url=https://devtools.api.cloud.ru/repo/api/v1`,
    `git_host=https://repo.cloud.ru/`,
-   `workflow_api_url=https://pipeline.cloud.ru/public-api/v1`.
+   `workflow_api_url=https://devtools.api.cloud.ru/workflow/v1`.
 2. File at `~/.config/eds/config.json` (override with `EDS_CONFIG`).
 3. Environment: `EDS_PROJECT_ID`, `EDS_REPO_API_URL`,
    `EDS_API_KEY`, `EDS_REPO_GIT_HOST`, `EDS_WF_API_URL`.
