@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/binary-install/binstaller/main/schema/InstallSpec.json
+schema: v1
+repo: cloud-ru/evolution-devservices-cli
+name: eds
+asset:
+  template: eds-${OS}-${ARCH}${EXT}
+checksums:
+  algorithm: sha256
+  template: checksums.txt

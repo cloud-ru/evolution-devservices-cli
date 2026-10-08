@@ -7,23 +7,6 @@ developer tools products. It currently covers two products:
 - **Workflow Studio** (`eds wf`) — wires a repository + branch to a deploy
   pipeline and publishes it.
 
-Repo and Workflow Studio are independent products, but both are authenticated
-with the same API key (`EDS_API_KEY`) via `X-API-KEY`. `eds` is just the
-platform CLI they're both driven through. Every command is designed to be safely
-driven by automation and AI agents: JSON output by default, environment variables
-for secrets.
-
-- Single static binary (Go, no runtime dependencies).
-- Reads the API key from `EDS_API_KEY` or from `~/.config/eds/config.json`.
-- Outputs JSON by default. Use `--yaml` for YAML output. `--quiet` suppresses
-  all output (useful for fire-and-forget calls from agents).
-- Repo uses the local `git` CLI for clone. Both products authenticate with
-  `X-API-KEY`. `eds repo clone` embeds the API key as HTTP Basic Auth
-  credentials directly into the smart-HTTP URL it passes to `git clone`, so
-  clone/push work standalone — no git credential helper, OS keychain, or
-  `~/.netrc` needs to be pre-configured. This matters for CI and AI agent
-  sandboxes, which typically have none of those.
-
 ## Installation
 
 ### From a GitHub Release (recommended)
@@ -31,8 +14,7 @@ for secrets.
 **macOS / Linux:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/cloud-ru/evolution-devservices-cli/main/scripts/install.sh | bash
-export PATH="$HOME/.local/bin:$PATH"
+curl -fsSL https://raw.githubusercontent.com/cloud-ru/evolution-devservices-cli/main/scripts/install.sh | sudo bash -s -- -b /usr/local/bin/
 eds version
 ```
 
@@ -43,35 +25,12 @@ iwr -useb https://raw.githubusercontent.com/cloud-ru/evolution-devservices-cli/m
 eds version
 ```
 
-The installer detects the platform, downloads the matching static binary
-from the latest [GitHub Release](https://github.com/cloud-ru/evolution-devservices-cli/releases),
-places it in `~/.local/bin/eds`, and verifies the install.
-
-You can also grab a binary directly from the
-[releases page](https://github.com/cloud-ru/evolution-devservices-cli/releases/latest):
+### Using Go
 
 ```bash
-# pick eds-<os>-<arch> for your platform, e.g. eds-darwin-arm64, eds-linux-amd64, eds-windows-amd64.exe
-curl -fsSL -o eds \
-  https://github.com/cloud-ru/evolution-devservices-cli/releases/latest/download/eds-darwin-arm64
-chmod +x eds && sudo mv eds /usr/local/bin/eds
-```
-
-### From source
-
-```bash
-git clone git@github.com:cloud-ru/evolution-devservices-cli.git
-cd evolution-devservices-cli
 go install github.com/cloud-ru/evolution-devservices-cli/cmd/eds@latest
-# or
-make build           # ./bin/eds
-make build-all       # cross-compile darwin/linux/windows × amd64/arm64 into ./dist/
-# or, with GoReleaser (https://goreleaser.com)
-make goreleaser-build   # snapshot build into ./dist/
+eds version
 ```
-
-> Target platforms: **Linux + macOS + Windows** (developers locally + CI).
-> Override the matrix if you ever need to: `make build-all OSES="linux darwin" ARCHS="amd64 arm64"`.
 
 ## Configuration
 
@@ -89,32 +48,6 @@ Env vars and flags are namespaced by product for URLs — `EDS_REPO_*`/`--repo-*
 for Repo, `EDS_WF_*`/`--wf-*` for Workflow Studio — except for `--api-key`/
 `EDS_API_KEY` and `--project`/`EDS_PROJECT_ID`, which are shared platform-level
 settings.
-
-Example config file (`~/.config/eds/config.json`):
-
-```json
-{
-  "api_url": "https://devtools.api.cloud.ru/repo/api/v1",
-  "project_id": "3232b2d0-1063-41e6-b2fa-13df767f4a0a",
-  "api_key": "...",
-  "git_host": "https://repo.cloud.ru/",
-  "workflow_api_url": "https://pipeline.cloud.ru/public-api/v1"
-}
-```
-
-### Production vs dev (Repo product)
-
-- **Production** — `https://devtools.api.cloud.ru/repo/api/v1`, git host
-  `https://repo.cloud.ru/`.
-- **Dev** — `https://devtools.dev.api.internal.cloud.ru/repo/api/v1`.
-
-Override with `--repo-api-url` or `EDS_REPO_API_URL`.
-
-### Workflow Studio auth
-
-Workflow Studio uses the same API key as Repo (`--api-key` / `EDS_API_KEY`),
-sent as `X-API-KEY` on every request. There is no separate credential pair or
-token exchange — the same key works for both `eds repo *` and `eds wf *`.
 
 ## Commands
 
@@ -291,74 +224,6 @@ make goreleaser-build
 # (draft release; publish manually or enable auto-publish in .goreleaser.yaml)
 git tag v0.2.0 && git push origin v0.2.0
 make goreleaser-release
-```
-
-GoReleaser requires the `goreleaser` CLI to be installed:
-
-```bash
-# macOS / Linux
-brew install goreleaser
-# or via Go
-go install github.com/goreleaser/goreleaser/v2@latest
-```
-
-`scripts/install.sh` downloads from the latest GitHub Release by default.
-The `Makefile` also has `make upload`/`make upload-latest` targets for
-optionally mirroring builds to an S3-compatible bucket (e.g. for internal
-environments without GitHub access) — pass `EDS_CLI_BASE_URL` to
-`install.sh` to install from a mirror instead of GitHub:
-
-```bash
-export AWS_ENDPOINT_URL=https://storage.cloud.ru
-export AWS_ACCESS_KEY_ID=...
-export AWS_SECRET_ACCESS_KEY=...
-make upload BUCKET=my-bucket PREFIX=evolution-devservices-cli VERSION=v0.2.0
-
-curl -fsSL https://storage.cloud.ru/my-bucket/evolution-devservices-cli/install.sh | \
-  EDS_CLI_BASE_URL=https://storage.cloud.ru/my-bucket/evolution-devservices-cli bash
-
-# Or on Windows:
-$env:EDS_CLI_BASE_URL = "https://storage.cloud.ru/my-bucket/evolution-devservices-cli"
-iwr -useb https://storage.cloud.ru/my-bucket/evolution-devservices-cli/install.ps1 | iex
-```
-
-## Development
-
-```bash
-make lint
-make test          # go test ./...
-make build         # current platform into ./bin/
-make build-all     # full matrix into ./dist/
-make goreleaser-build  # snapshot build via GoReleaser into ./dist/
-make clean         # remove ./bin and ./dist
-make help          # list targets
-```
-
-Project layout:
-
-```
-cmd/
-  eds/main.go                    # entry point + ldflags-driven version
-  root.go                        # cobra root command (`eds`) + global flags
-  helpers.go                    # config resolution, runtime context
-  login.go                      # `eds login`
-  config.go                     # `eds config`
-  version.go                    # `eds version`
-  repo.go                       # `eds repo list|create|show|delete|clone`
-  wf.go                         # `eds wf` parent command (groups app/run/job)
-  app.go                        # `eds wf app create|list|show|update|delete|deploy|deployments`
-  run.go                        # `eds wf run show|stop`
-  job.go                        # `eds wf job logs`
-internal/
-  config/                       # disk config + env overrides
-  output/                       # JSON / YAML formatting
-  repoapi/                      # thin HTTP client for the Repo product API
-  workflow_client/              # generated OpenAPI client for Workflow Studio
-scripts/
-  install.sh                    # one-liner installer (GitHub Releases by default)
-skills/
-  eds/SKILL.md                  # Agent Skills description
-Makefile                        # build, build-all, release, upload, …
 ```
 
 ## Environment variables
