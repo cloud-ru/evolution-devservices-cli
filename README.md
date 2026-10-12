@@ -38,7 +38,7 @@ The CLI looks for configuration in this order (later wins):
 
 1. Built-in defaults: Repo API URL `https://devtools.api.cloud.ru/repo/api/v1`,
    git host `https://repo.cloud.ru/`, Workflow Studio API URL
-   `https://pipeline.cloud.ru/public-api/v1`.
+   `https://devtools.api.cloud.ru/workflow/v1`.
 2. File `~/.config/eds/config.json` (overridable via `EDS_CONFIG` or
    `XDG_CONFIG_HOME`) — a single platform-level file shared by both products.
 3. Environment variables (see table below).

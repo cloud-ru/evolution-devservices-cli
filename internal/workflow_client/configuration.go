@@ -93,7 +93,7 @@ func NewConfiguration() *Configuration {
 		Debug:         false,
 		Servers: ServerConfigurations{
 			{
-				URL:         "https://pipeline.cloud.ru/public-api/v1",
+				URL:         "https://devtools.api.cloud.ru/workflow/v1",
 				Description: "No description provided",
 			},
 		},

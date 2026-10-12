@@ -67,7 +67,7 @@ ctx = context.WithValue(context.Background(), workflowclient.ContextOperationSer
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://pipeline.cloud.ru/public-api/v1*
+All URIs are relative to *https://devtools.api.cloud.ru/workflow/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
