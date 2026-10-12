@@ -149,25 +149,13 @@ tidy:
 clean:
 	rm -rf $(BUILD_DIR) $(DIST_DIR)
 
-.PHONY: help
-help:
-	@echo "Targets:"
-	@echo "  build           build for the current platform into ./bin/"
-	@echo "  build-all       cross-compile darwin/linux/windows × amd64/arm64 into ./dist/"
-	@echo "  build-one       helper for build-all (GOOS=... GOARCH=...)"
-	@echo "  goreleaser-build   local snapshot build via GoReleaser (into ./dist/)"
-	@echo "  goreleaser-release full release via GoReleaser (requires a git tag)"
-	@echo "  release            build-all + sha256 checksums (legacy)"
-	@echo "  upload          build-all + publish to S3 (BUCKET=... VERSION=...)"
-	@echo "  upload-latest   only update the 'latest' pointer in the bucket"
-	@echo "  install         go install into \$$GOBIN"
-	@echo "  lint            run golangci-lint"
-	@echo "  test, tidy standard Go targets"
-	@echo "  clean           remove ./bin and ./dist"
-
 openapi-generator:
 	openapi-generator-cli generate -i openapi-public.yaml -g go -o ./internal/workflow_client -c .openapi-generator.yaml
 
 .PHONY: lint
 lint:
 	golangci-lint run --fix
+
+.PHONY: gen-install
+gen-install:
+	binst gen -o scripts/install.sh --config binstaller.yml
