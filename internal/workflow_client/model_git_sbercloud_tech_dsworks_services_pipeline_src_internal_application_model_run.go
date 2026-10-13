@@ -19,12 +19,16 @@ var _ MappedNullable = &GitSbercloudTechDsworksServicesPipelineSrcInternalApplic
 
 // GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun struct for GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun
 type GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun struct {
-	Branch        *string                                                                      `json:"branch,omitempty"`
-	CreatedAt     *string                                                                      `json:"created_at,omitempty"`
-	Id            *string                                                                      `json:"id,omitempty"`
-	Pipeline      *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelPipeline  `json:"pipeline,omitempty"`
-	PipelineId    *string                                                                      `json:"pipeline_id,omitempty"`
-	Snapshot      *string                                                                      `json:"snapshot,omitempty"`
+	Branch    *string `json:"branch,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	// DestinationNode — нода, до которой шёл частичный запуск («Execute step»); nil — полный run.
+	DestinationNode *string                                                                     `json:"destination_node,omitempty"`
+	Id              *string                                                                     `json:"id,omitempty"`
+	Pipeline        *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelPipeline `json:"pipeline,omitempty"`
+	PipelineId      *string                                                                     `json:"pipeline_id,omitempty"`
+	Snapshot        *string                                                                     `json:"snapshot,omitempty"`
+	// SourceRunID — run, данные которого переиспользовал частичный запуск.
+	SourceRunId   *string                                                                      `json:"source_run_id,omitempty"`
 	Stages        []GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelStage    `json:"stages,omitempty"`
 	Status        *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRunStatus `json:"status,omitempty"`
 	StatusMessage *string                                                                      `json:"status_message,omitempty"`
@@ -113,6 +117,38 @@ func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) 
 // SetCreatedAt gets a reference to the given string and assigns it to the CreatedAt field.
 func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) SetCreatedAt(v string) {
 	o.CreatedAt = &v
+}
+
+// GetDestinationNode returns the DestinationNode field value if set, zero value otherwise.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) GetDestinationNode() string {
+	if o == nil || IsNil(o.DestinationNode) {
+		var ret string
+		return ret
+	}
+	return *o.DestinationNode
+}
+
+// GetDestinationNodeOk returns a tuple with the DestinationNode field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) GetDestinationNodeOk() (*string, bool) {
+	if o == nil || IsNil(o.DestinationNode) {
+		return nil, false
+	}
+	return o.DestinationNode, true
+}
+
+// HasDestinationNode returns a boolean if a field has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) HasDestinationNode() bool {
+	if o != nil && !IsNil(o.DestinationNode) {
+		return true
+	}
+
+	return false
+}
+
+// SetDestinationNode gets a reference to the given string and assigns it to the DestinationNode field.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) SetDestinationNode(v string) {
+	o.DestinationNode = &v
 }
 
 // GetId returns the Id field value if set, zero value otherwise.
@@ -241,6 +277,38 @@ func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) 
 // SetSnapshot gets a reference to the given string and assigns it to the Snapshot field.
 func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) SetSnapshot(v string) {
 	o.Snapshot = &v
+}
+
+// GetSourceRunId returns the SourceRunId field value if set, zero value otherwise.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) GetSourceRunId() string {
+	if o == nil || IsNil(o.SourceRunId) {
+		var ret string
+		return ret
+	}
+	return *o.SourceRunId
+}
+
+// GetSourceRunIdOk returns a tuple with the SourceRunId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) GetSourceRunIdOk() (*string, bool) {
+	if o == nil || IsNil(o.SourceRunId) {
+		return nil, false
+	}
+	return o.SourceRunId, true
+}
+
+// HasSourceRunId returns a boolean if a field has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) HasSourceRunId() bool {
+	if o != nil && !IsNil(o.SourceRunId) {
+		return true
+	}
+
+	return false
+}
+
+// SetSourceRunId gets a reference to the given string and assigns it to the SourceRunId field.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) SetSourceRunId(v string) {
+	o.SourceRunId = &v
 }
 
 // GetStages returns the Stages field value if set, zero value otherwise.
@@ -451,6 +519,9 @@ func (o GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) T
 	if !IsNil(o.CreatedAt) {
 		toSerialize["created_at"] = o.CreatedAt
 	}
+	if !IsNil(o.DestinationNode) {
+		toSerialize["destination_node"] = o.DestinationNode
+	}
 	if !IsNil(o.Id) {
 		toSerialize["id"] = o.Id
 	}
@@ -462,6 +533,9 @@ func (o GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRun) T
 	}
 	if !IsNil(o.Snapshot) {
 		toSerialize["snapshot"] = o.Snapshot
+	}
+	if !IsNil(o.SourceRunId) {
+		toSerialize["source_run_id"] = o.SourceRunId
 	}
 	if !IsNil(o.Stages) {
 		toSerialize["stages"] = o.Stages

@@ -63,18 +63,36 @@ eds repo delete <id-or-name> [--force]     delete a repository
 eds repo clone <id-or-name> [dir] [--ssh]  clone via local git CLI
 eds repo remote-add <id-or-name> [--name N] [--ssh]  wire an existing local checkout to it (git remote add)
 
-eds wf app create <name> --repository R|--repository-url URL --branch B   create and auto-deploy a Workflow Studio application
-eds wf app list                                       list applications
+eds wf app create <name> --repository R|--repository-url URL --branch B [--space-id S] [--port N]   create and auto-deploy a Workflow Studio application
+eds wf app list [--space-id S]                        list applications
 eds wf app show <id>                                  show application details
-eds wf app update <id> --branch B [--name N]          update name/branch
+eds wf app update <id> --branch B [--name N] [--space-id S] [--port N]   update name/branch/space/port
 eds wf app delete <id> [--force]                       delete an application
 eds wf app deploy <id>                                run the pipeline and publish
 eds wf app deployments <id>                           list publish history
 
-eds wf run show <id>                          show a run's status, stages and jobs
-eds wf run stop <id>                          stop a running run
+eds wf pipeline list                                    list pipelines
+eds wf pipeline show <id>                               show pipeline details
 
-eds wf job logs <id>                          get logs for a job
+eds wf run list [--pipeline-id ID] [--limit N] [--with-config]   list pipeline runs
+eds wf run show <id>                                  show a run's status, stages and jobs
+eds wf run stop <id>                                  stop a running run
+
+eds wf space list                                     list application spaces
+eds wf space create --name <name>                     create an application space
+eds wf space show <id>                                show an application space
+eds wf space update <id> --name <name>                update an application space
+eds wf space delete <id>                              delete an application space
+
+eds wf variable list --pipeline-id <id>               list variables for a pipeline
+eds wf variable create <name> <value> --pipeline-id   create a variable
+eds wf variable update <name> <value> --pipeline-id     update a variable
+eds wf variable delete <name> --pipeline-id             delete a variable
+
+eds wf job list --run-id <id>                         list jobs for a run
+eds wf job show <id>                                  show job details
+eds wf job stop <id>                                  stop a running job
+eds wf job logs <id>                                  get logs for a job
 ```
 
 ### Login

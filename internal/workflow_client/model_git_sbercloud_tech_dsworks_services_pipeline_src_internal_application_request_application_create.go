@@ -23,6 +23,7 @@ var _ MappedNullable = &GitSbercloudTechDsworksServicesPipelineSrcInternalApplic
 type GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate struct {
 	Branch        string  `json:"branch"`
 	Name          *string `json:"name,omitempty"`
+	Port          *int    `json:"port,omitempty"`
 	RepositoryId  *string `json:"repository_id,omitempty"`
 	RepositoryUrl *string `json:"repository_url,omitempty"`
 	SpaceId       *string `json:"space_id,omitempty"`
@@ -102,6 +103,38 @@ func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApp
 // SetName gets a reference to the given string and assigns it to the Name field.
 func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate) SetName(v string) {
 	o.Name = &v
+}
+
+// GetPort returns the Port field value if set, zero value otherwise.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate) GetPort() int {
+	if o == nil || IsNil(o.Port) {
+		var ret int
+		return ret
+	}
+	return *o.Port
+}
+
+// GetPortOk returns a tuple with the Port field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate) GetPortOk() (*int, bool) {
+	if o == nil || IsNil(o.Port) {
+		return nil, false
+	}
+	return o.Port, true
+}
+
+// HasPort returns a boolean if a field has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate) HasPort() bool {
+	if o != nil && !IsNil(o.Port) {
+		return true
+	}
+
+	return false
+}
+
+// SetPort gets a reference to the given int and assigns it to the Port field.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate) SetPort(v int) {
+	o.Port = &v
 }
 
 // GetRepositoryId returns the RepositoryId field value if set, zero value otherwise.
@@ -213,6 +246,9 @@ func (o GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestAppl
 	toSerialize["branch"] = o.Branch
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
+	}
+	if !IsNil(o.Port) {
+		toSerialize["port"] = o.Port
 	}
 	if !IsNil(o.RepositoryId) {
 		toSerialize["repository_id"] = o.RepositoryId

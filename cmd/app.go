@@ -34,6 +34,8 @@ func newAppCreateCmd() *cobra.Command {
 		repository    string
 		repositoryURL string
 		branch        string
+		spaceID       string
+		port          int
 	)
 
 	cmd := &cobra.Command{
@@ -83,6 +85,12 @@ accepts either its id or its name) or an external git URL (--repository-url).`,
 			if repositoryURL != "" {
 				req.RepositoryUrl = &repositoryURL
 			}
+			if spaceID != "" {
+				req.SpaceId = &spaceID
+			}
+			if port != 0 {
+				req.Port = &port
+			}
 			app, _, err := ctx.WorkflowClient.ServicesAPI.ProjectProjectIdApplicationPost(cmd.Context(), ctx.ProjectID).
 				Request(req).Execute()
 			if err != nil {
@@ -96,15 +104,18 @@ accepts either its id or its name) or an external git URL (--repository-url).`,
 	cmd.Flags().StringVar(&repository, "repository", "", "id or name of an existing `eds repo` repository")
 	cmd.Flags().StringVar(&repositoryURL, "repository-url", "", "external git repository URL (alternative to --repository)")
 	cmd.Flags().StringVar(&branch, "branch", "main", "branch to deploy from")
+	cmd.Flags().StringVar(&spaceID, "space-id", "", "application space ID to place the app in (default space if omitted)")
+	cmd.Flags().IntVar(&port, "port", 0, "container port the app listens on (server default if omitted)")
 	return cmd
 }
 
 func newAppListCmd() *cobra.Command {
 	var (
-		search string
-		sort   string
-		limit  int
-		offset int
+		search  string
+		sort    string
+		limit   int
+		offset  int
+		spaceID string
 	)
 
 	cmd := &cobra.Command{
@@ -127,6 +138,7 @@ func newAppListCmd() *cobra.Command {
 				Limit(limit).
 				Offset(offset).
 				Search(search).
+				SpaceId(spaceID).
 				Execute()
 			if err != nil {
 				return fmt.Errorf("workflow client application list: %w", err)
@@ -140,6 +152,7 @@ func newAppListCmd() *cobra.Command {
 	cmd.Flags().StringVar(&sort, "sort", "created_at_desc", "sort order: created_at_asc, created_at_desc")
 	cmd.Flags().IntVar(&limit, "limit", 50, "page size")
 	cmd.Flags().IntVar(&offset, "offset", 0, "offset")
+	cmd.Flags().StringVar(&spaceID, "space-id", "", "filter by application space ID")
 	return cmd
 }
 
@@ -171,8 +184,10 @@ func newAppShowCmd() *cobra.Command {
 
 func newAppUpdateCmd() *cobra.Command {
 	var (
-		name   string
-		branch string
+		name    string
+		branch  string
+		spaceID string
+		port    int
 	)
 
 	cmd := &cobra.Command{
@@ -194,11 +209,16 @@ func newAppUpdateCmd() *cobra.Command {
 			}
 
 			req := workflowclient.GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate{
-				Branch:  branch,
-				SpaceId: "",
+				Branch: branch,
 			}
 			if name != "" {
 				req.Name = &name
+			}
+			if spaceID != "" {
+				req.SpaceId = &spaceID
+			}
+			if port != 0 {
+				req.Port = &port
 			}
 			_, err = ctx.WorkflowClient.ServicesAPI.ProjectProjectIdApplicationApplicationIdPatch(cmd.Context(), ctx.ProjectID, args[0]).
 				Request(req).
@@ -212,6 +232,8 @@ func newAppUpdateCmd() *cobra.Command {
 
 	cmd.Flags().StringVar(&name, "name", "", "new application name")
 	cmd.Flags().StringVar(&branch, "branch", "", "new branch to deploy from")
+	cmd.Flags().StringVar(&spaceID, "space-id", "", "move the app to this application space ID")
+	cmd.Flags().IntVar(&port, "port", 0, "container port the app listens on")
 	return cmd
 }
 

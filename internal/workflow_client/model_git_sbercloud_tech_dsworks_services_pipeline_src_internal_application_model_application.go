@@ -24,6 +24,7 @@ type GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplicati
 	Id            *string                                                                `json:"id,omitempty"`
 	Name          *string                                                                `json:"name,omitempty"`
 	PipelineId    *string                                                                `json:"pipeline_id,omitempty"`
+	Port          *int                                                                   `json:"port,omitempty"`
 	ProjectId     *string                                                                `json:"project_id,omitempty"`
 	RepositoryId  *string                                                                `json:"repository_id,omitempty"`
 	RepositoryUrl *string                                                                `json:"repository_url,omitempty"`
@@ -210,6 +211,38 @@ func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelAppli
 // SetPipelineId gets a reference to the given string and assigns it to the PipelineId field.
 func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplication) SetPipelineId(v string) {
 	o.PipelineId = &v
+}
+
+// GetPort returns the Port field value if set, zero value otherwise.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplication) GetPort() int {
+	if o == nil || IsNil(o.Port) {
+		var ret int
+		return ret
+	}
+	return *o.Port
+}
+
+// GetPortOk returns a tuple with the Port field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplication) GetPortOk() (*int, bool) {
+	if o == nil || IsNil(o.Port) {
+		return nil, false
+	}
+	return o.Port, true
+}
+
+// HasPort returns a boolean if a field has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplication) HasPort() bool {
+	if o != nil && !IsNil(o.Port) {
+		return true
+	}
+
+	return false
+}
+
+// SetPort gets a reference to the given int and assigns it to the Port field.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplication) SetPort(v int) {
+	o.Port = &v
 }
 
 // GetProjectId returns the ProjectId field value if set, zero value otherwise.
@@ -524,6 +557,9 @@ func (o GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplic
 	}
 	if !IsNil(o.PipelineId) {
 		toSerialize["pipeline_id"] = o.PipelineId
+	}
+	if !IsNil(o.Port) {
+		toSerialize["port"] = o.Port
 	}
 	if !IsNil(o.ProjectId) {
 		toSerialize["project_id"] = o.ProjectId

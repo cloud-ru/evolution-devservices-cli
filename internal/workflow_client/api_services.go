@@ -599,7 +599,7 @@ type ServicesAPIProjectProjectIdApplicationApplicationIdDeploymentPostRequest st
 	request       *map[string]interface{}
 }
 
-// Deployment create request
+// Deployment create request; the run uses the port saved on the application (change it via application update)
 func (r ServicesAPIProjectProjectIdApplicationApplicationIdDeploymentPostRequest) Request(request map[string]interface{}) ServicesAPIProjectProjectIdApplicationApplicationIdDeploymentPostRequest {
 	r.request = &request
 	return r
@@ -941,7 +941,7 @@ type ServicesAPIProjectProjectIdApplicationApplicationIdPatchRequest struct {
 	request       *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate
 }
 
-// Application update request
+// Application update request; port is optional container port: 1025-65535 except 8008, 8012, 8013, 8022, 8112, 9090, 9091; update is rejected while a pipeline run is in progress
 func (r ServicesAPIProjectProjectIdApplicationApplicationIdPatchRequest) Request(request GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) ServicesAPIProjectProjectIdApplicationApplicationIdPatchRequest {
 	r.request = &request
 	return r
@@ -1116,7 +1116,7 @@ type ServicesAPIProjectProjectIdApplicationPostRequest struct {
 	request    *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate
 }
 
-// Application create request; repository_url must be an HTTPS git clone URL (cloning uses HTTPS, not SSH), branch must exist, repository root must contain Dockerfile
+// Application create request; repository_url must be an HTTPS git clone URL (cloning uses HTTPS, not SSH), branch must exist, repository root must contain Dockerfile; port is optional container port: 1025-65535 except 8008, 8012, 8013, 8022, 8112, 9090, 9091 (default 8080)
 func (r ServicesAPIProjectProjectIdApplicationPostRequest) Request(request GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate) ServicesAPIProjectProjectIdApplicationPostRequest {
 	r.request = &request
 	return r
