@@ -14,8 +14,58 @@ func newRunCmd() *cobra.Command {
 		Use:   "run",
 		Short: "Inspect and control Workflow Studio pipeline runs",
 	}
+	cmd.AddCommand(newRunListCmd())
 	cmd.AddCommand(newRunShowCmd())
 	cmd.AddCommand(newRunStopCmd())
+	return cmd
+}
+
+func newRunListCmd() *cobra.Command {
+	var (
+		pipelineID string
+		sort       string
+		limit      int
+		offset     int
+		withConfig bool
+	)
+
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "List Workflow Studio pipeline runs",
+		Example: `  eds wf run list
+  eds wf run list --pipeline-id my-pipeline-id --limit 10`,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			ctx, err := resolveContext(cmd)
+			if err != nil {
+				return err
+			}
+			if err := ctx.ensureWorkflowAuth(cmd.Context()); err != nil {
+				return err
+			}
+
+			req := ctx.WorkflowClient.WorkflowsAPI.ListRuns(cmd.Context(), ctx.ProjectID).
+				PipelineId(pipelineID).
+				Sort(sort).
+				Limit(limit).
+				Offset(offset)
+			if cmd.Flags().Changed("with-config") {
+				req = req.WithConfig(withConfig)
+			}
+
+			resp, _, err := req.Execute()
+			if err != nil {
+				return fmt.Errorf("workflow client run list: %w", err)
+			}
+
+			return ctx.Printer.Print(resp)
+		},
+	}
+
+	cmd.Flags().StringVar(&pipelineID, "pipeline-id", "", "filter by pipeline ID")
+	cmd.Flags().StringVar(&sort, "sort", "", "sort order")
+	cmd.Flags().IntVar(&limit, "limit", 50, "page size")
+	cmd.Flags().IntVar(&offset, "offset", 0, "offset")
+	cmd.Flags().BoolVar(&withConfig, "with-config", false, "include run config in the response")
 	return cmd
 }
 
@@ -66,8 +116,7 @@ func newRunStopCmd() *cobra.Command {
 				return fmt.Errorf("stop run: %w", err)
 			}
 
-			fmt.Fprintf(cmd.OutOrStdout(), "Stopped run %s\n", args[0])
-			return nil
+			return ctx.Printer.Print("run has been stopped")
 		},
 	}
 	return cmd

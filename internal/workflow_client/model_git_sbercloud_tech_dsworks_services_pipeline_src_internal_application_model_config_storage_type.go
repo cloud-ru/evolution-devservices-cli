@@ -20,12 +20,14 @@ type GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelConfigSto
 
 // List of git_sbercloud_tech_dsworks_services_pipeline_src_internal_application_model.ConfigStorageType
 const (
+	EmptyStorageType      GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelConfigStorageType = ""
 	DBConfigStorageType   GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelConfigStorageType = "db"
 	RepoConfigStorageType GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelConfigStorageType = "repo"
 )
 
 // All allowed values of GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelConfigStorageType enum
 var AllowedGitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelConfigStorageTypeEnumValues = []GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelConfigStorageType{
+	"",
 	"db",
 	"repo",
 }

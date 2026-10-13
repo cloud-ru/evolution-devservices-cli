@@ -195,8 +195,8 @@ func newRepoDeleteCmd() *cobra.Command {
 			if err := ctx.API.DeleteRepository(cmd.Context(), id); err != nil {
 				return fmt.Errorf("api delete repository: %w", err)
 			}
-			fmt.Fprintf(cmd.OutOrStdout(), "Deleted repository %s\n", args[0])
-			return nil
+
+			return ctx.Printer.Print("repository has been deleted")
 		},
 	}
 

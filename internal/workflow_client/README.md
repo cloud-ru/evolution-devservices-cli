@@ -67,14 +67,29 @@ ctx = context.WithValue(context.Background(), workflowclient.ContextOperationSer
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://devtools.api.cloud.ru/workflow/v1*
+All URIs are relative to *https://pipeline.cloud.ru/public-api/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*ApplicationSpaceAPI* | [**CreateApplicationSpace**](docs/ApplicationSpaceAPI.md#createapplicationspace) | **Post** /project/{project_id}/space | Create application space
+*ApplicationSpaceAPI* | [**DeleteApplicationSpace**](docs/ApplicationSpaceAPI.md#deleteapplicationspace) | **Delete** /project/{project_id}/space/{space_id} | Delete application space
+*ApplicationSpaceAPI* | [**GetApplicationSpace**](docs/ApplicationSpaceAPI.md#getapplicationspace) | **Get** /project/{project_id}/space/{space_id} | Get application space
+*ApplicationSpaceAPI* | [**ListApplicationSpaces**](docs/ApplicationSpaceAPI.md#listapplicationspaces) | **Get** /project/{project_id}/space/list | List application spaces
+*ApplicationSpaceAPI* | [**UpdateApplicationSpace**](docs/ApplicationSpaceAPI.md#updateapplicationspace) | **Patch** /project/{project_id}/space/{space_id} | Update application space
+*PipelinesAPI* | [**CreateVariable**](docs/PipelinesAPI.md#createvariable) | **Post** /project/{project_id}/pipeline/{pipeline_id}/variable | Create variable
+*PipelinesAPI* | [**DeleteVariable**](docs/PipelinesAPI.md#deletevariable) | **Delete** /project/{project_id}/pipeline/{pipeline_id}/variable | Delete variable
+*PipelinesAPI* | [**GetJob**](docs/PipelinesAPI.md#getjob) | **Get** /project/{project_id}/job/{job_id} | Get job
 *PipelinesAPI* | [**GetJobLogs**](docs/PipelinesAPI.md#getjoblogs) | **Get** /project/{project_id}/job/{job_id}/log/list | Get job logs
+*PipelinesAPI* | [**GetPipeline**](docs/PipelinesAPI.md#getpipeline) | **Get** /project/{project_id}/pipeline/{pipeline_id} | Get pipeline
 *PipelinesAPI* | [**GetRun**](docs/PipelinesAPI.md#getrun) | **Get** /project/{project_id}/run/{run_id} | Get run
+*PipelinesAPI* | [**ListJobs**](docs/PipelinesAPI.md#listjobs) | **Get** /project/{project_id}/job/list | List jobs
+*PipelinesAPI* | [**ListPipelines**](docs/PipelinesAPI.md#listpipelines) | **Get** /project/{project_id}/pipeline/list | List pipelines
+*PipelinesAPI* | [**ListRuns**](docs/PipelinesAPI.md#listruns) | **Get** /project/{project_id}/run/list | List runs
+*PipelinesAPI* | [**ListVariables**](docs/PipelinesAPI.md#listvariables) | **Get** /project/{project_id}/pipeline/{pipeline_id}/variable/list | List variables
 *PipelinesAPI* | [**RunPipeline**](docs/PipelinesAPI.md#runpipeline) | **Post** /project/{project_id}/pipeline/{pipeline_id}/run | Run pipeline
+*PipelinesAPI* | [**StopJob**](docs/PipelinesAPI.md#stopjob) | **Post** /project/{project_id}/job/{job_id}/stop | Stop job
 *PipelinesAPI* | [**StopRun**](docs/PipelinesAPI.md#stoprun) | **Post** /project/{project_id}/run/{run_id}/stop | Stop run
+*PipelinesAPI* | [**UpdateVariable**](docs/PipelinesAPI.md#updatevariable) | **Put** /project/{project_id}/pipeline/{pipeline_id}/variable | Update variable
 *ServicesAPI* | [**ListApplications**](docs/ServicesAPI.md#listapplications) | **Get** /project/{project_id}/application/list | List applications
 *ServicesAPI* | [**ProjectProjectIdApplicationApplicationIdDelete**](docs/ServicesAPI.md#projectprojectidapplicationapplicationiddelete) | **Delete** /project/{project_id}/application/{application_id} | Delete application
 *ServicesAPI* | [**ProjectProjectIdApplicationApplicationIdDeploymentListGet**](docs/ServicesAPI.md#projectprojectidapplicationapplicationiddeploymentlistget) | **Get** /project/{project_id}/application/{application_id}/deployment/list | List deployments
@@ -82,15 +97,20 @@ Class | Method | HTTP request | Description
 *ServicesAPI* | [**ProjectProjectIdApplicationApplicationIdGet**](docs/ServicesAPI.md#projectprojectidapplicationapplicationidget) | **Get** /project/{project_id}/application/{application_id} | Get application
 *ServicesAPI* | [**ProjectProjectIdApplicationApplicationIdPatch**](docs/ServicesAPI.md#projectprojectidapplicationapplicationidpatch) | **Patch** /project/{project_id}/application/{application_id} | Update application
 *ServicesAPI* | [**ProjectProjectIdApplicationPost**](docs/ServicesAPI.md#projectprojectidapplicationpost) | **Post** /project/{project_id}/application | Create application
+*WorkflowsAPI* | [**GetJob**](docs/WorkflowsAPI.md#getjob) | **Get** /project/{project_id}/job/{job_id} | Get job
 *WorkflowsAPI* | [**GetJobLogs**](docs/WorkflowsAPI.md#getjoblogs) | **Get** /project/{project_id}/job/{job_id}/log/list | Get job logs
 *WorkflowsAPI* | [**GetRun**](docs/WorkflowsAPI.md#getrun) | **Get** /project/{project_id}/run/{run_id} | Get run
+*WorkflowsAPI* | [**ListJobs**](docs/WorkflowsAPI.md#listjobs) | **Get** /project/{project_id}/job/list | List jobs
+*WorkflowsAPI* | [**ListRuns**](docs/WorkflowsAPI.md#listruns) | **Get** /project/{project_id}/run/list | List runs
 *WorkflowsAPI* | [**RunPipeline**](docs/WorkflowsAPI.md#runpipeline) | **Post** /project/{project_id}/pipeline/{pipeline_id}/run | Run pipeline
+*WorkflowsAPI* | [**StopJob**](docs/WorkflowsAPI.md#stopjob) | **Post** /project/{project_id}/job/{job_id}/stop | Stop job
 *WorkflowsAPI* | [**StopRun**](docs/WorkflowsAPI.md#stoprun) | **Post** /project/{project_id}/run/{run_id}/stop | Stop run
 
 
 ## Documentation For Models
 
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplication](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplication.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplicationSpace](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelApplicationSpace.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelConfigStorageType](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelConfigStorageType.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelDeployment](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelDeployment.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJob](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelJob.md)
@@ -102,18 +122,35 @@ Class | Method | HTTP request | Description
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRunStatus](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelRunStatus.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelStage](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationModelStage.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationCreate.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationSpaceCreate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationSpaceCreate.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationSpaceUpdate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationSpaceUpdate.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestJobLogList](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestJobLogList.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestVariableCreate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestVariableCreate.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestVariableUpdate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestVariableUpdate.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationCreate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationCreate.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationGet](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationGet.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationList](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationList.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationSpaceCreate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationSpaceCreate.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationSpaceGet](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationSpaceGet.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationSpaceList](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationSpaceList.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationSpaceUpdate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseApplicationSpaceUpdate.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseClone](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseClone.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseDeploymentCreate](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseDeploymentCreate.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseDeploymentList](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseDeploymentList.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseDeploymentResponse](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseDeploymentResponse.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobGet](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobGet.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogList](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogList.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogs](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseJobLogs.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineGet](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineGet.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineList](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineList.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineRun](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponsePipelineRun.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRepository](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRepository.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRun](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRun.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunGet.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunList](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseRunList.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseVariable](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseVariable.md)
+ - [GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseVariableList](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationResponseVariableList.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsBadRequest](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsBadRequest.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsConflict](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsConflict.md)
  - [GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsInternal](docs/GitSbercloudTechDsworksServicesPipelineSrcInternalErrorsInternal.md)

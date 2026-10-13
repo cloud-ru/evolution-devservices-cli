@@ -23,7 +23,8 @@ var _ MappedNullable = &GitSbercloudTechDsworksServicesPipelineSrcInternalApplic
 type GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate struct {
 	Branch  string  `json:"branch"`
 	Name    *string `json:"name,omitempty"`
-	SpaceId string  `json:"space_id"`
+	Port    *int    `json:"port,omitempty"`
+	SpaceId *string `json:"space_id,omitempty"`
 }
 
 type _GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate
@@ -32,10 +33,9 @@ type _GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplic
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate(branch string, spaceId string) *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate {
+func NewGitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate(branch string) *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate {
 	this := GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate{}
 	this.Branch = branch
-	this.SpaceId = spaceId
 	return &this
 }
 
@@ -103,28 +103,68 @@ func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApp
 	o.Name = &v
 }
 
-// GetSpaceId returns the SpaceId field value
+// GetPort returns the Port field value if set, zero value otherwise.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) GetPort() int {
+	if o == nil || IsNil(o.Port) {
+		var ret int
+		return ret
+	}
+	return *o.Port
+}
+
+// GetPortOk returns a tuple with the Port field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) GetPortOk() (*int, bool) {
+	if o == nil || IsNil(o.Port) {
+		return nil, false
+	}
+	return o.Port, true
+}
+
+// HasPort returns a boolean if a field has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) HasPort() bool {
+	if o != nil && !IsNil(o.Port) {
+		return true
+	}
+
+	return false
+}
+
+// SetPort gets a reference to the given int and assigns it to the Port field.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) SetPort(v int) {
+	o.Port = &v
+}
+
+// GetSpaceId returns the SpaceId field value if set, zero value otherwise.
 func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) GetSpaceId() string {
-	if o == nil {
+	if o == nil || IsNil(o.SpaceId) {
 		var ret string
 		return ret
 	}
-
-	return o.SpaceId
+	return *o.SpaceId
 }
 
-// GetSpaceIdOk returns a tuple with the SpaceId field value
+// GetSpaceIdOk returns a tuple with the SpaceId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) GetSpaceIdOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.SpaceId) {
 		return nil, false
 	}
-	return &o.SpaceId, true
+	return o.SpaceId, true
 }
 
-// SetSpaceId sets field value
+// HasSpaceId returns a boolean if a field has been set.
+func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) HasSpaceId() bool {
+	if o != nil && !IsNil(o.SpaceId) {
+		return true
+	}
+
+	return false
+}
+
+// SetSpaceId gets a reference to the given string and assigns it to the SpaceId field.
 func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) SetSpaceId(v string) {
-	o.SpaceId = v
+	o.SpaceId = &v
 }
 
 func (o GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApplicationUpdate) MarshalJSON() ([]byte, error) {
@@ -141,7 +181,12 @@ func (o GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestAppl
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
 	}
-	toSerialize["space_id"] = o.SpaceId
+	if !IsNil(o.Port) {
+		toSerialize["port"] = o.Port
+	}
+	if !IsNil(o.SpaceId) {
+		toSerialize["space_id"] = o.SpaceId
+	}
 	return toSerialize, nil
 }
 
@@ -151,7 +196,6 @@ func (o *GitSbercloudTechDsworksServicesPipelineSrcInternalApplicationRequestApp
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"branch",
-		"space_id",
 	}
 
 	allProperties := make(map[string]interface{})

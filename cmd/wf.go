@@ -13,7 +13,10 @@ func newWFCmd() *cobra.Command {
 		Short: "Manage Workflow Studio applications, runs and jobs",
 	}
 	cmd.AddCommand(newAppCmd())
+	cmd.AddCommand(newPipelineCmd())
 	cmd.AddCommand(newRunCmd())
+	cmd.AddCommand(newSpaceCmd())
+	cmd.AddCommand(newVariableCmd())
 	cmd.AddCommand(newJobCmd())
 	return cmd
 }
